@@ -1,0 +1,166 @@
+/* BlockNote Custom Styling for OrganizeNow */
+
+/* Editor Container */
+.notion-editor-wrapper {
+  min-height: 500px;
+  width: 100%;
+  padding: 2rem 4rem;
+}
+
+/* Remove default padding from BlockNote */
+.bn-container {
+  padding: 0 !important;
+}
+
+/* Block styling */
+.bn-block-content {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #374151;
+}
+
+/* Headings */
+.bn-block-content h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.bn-block-content h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.bn-block-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+/* Lists */
+.bn-block-content ul,
+.bn-block-content ol {
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bn-block-content li {
+  margin-bottom: 0.25rem;
+}
+
+/* Code blocks */
+.bn-block-content pre {
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  overflow-x: auto;
+}
+
+.bn-block-content code {
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: 0.875rem;
+  color: #dc2626;
+}
+
+/* Blockquotes */
+.bn-block-content blockquote {
+  border-left: 4px solid #9333ea;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Tables */
+.bn-block-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.bn-block-content th,
+.bn-block-content td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.bn-block-content th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+/* Slash menu styling */
+.bn-suggestion-menu {
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.bn-suggestion-menu-item[data-hovered="true"] {
+  background-color: #f3f4f6;
+}
+
+.bn-suggestion-menu-item[data-selected="true"] {
+  background-color: #ede9fe;
+  color: #7c3aed;
+}
+
+/* Drag handle */
+.bn-drag-handle {
+  color: #9ca3af;
+}
+
+.bn-drag-handle:hover {
+  color: #6b7280;
+}
+
+/* Plus button */
+.bn-add-block-button {
+  color: #9ca3af;
+}
+
+.bn-add-block-button:hover {
+  color: #7c3aed;
+  background-color: #f3f4f6;
+}
+
+/* Placeholder */
+.bn-block-content[data-content-type="paragraph"]:first-child::before {
+  color: #9ca3af;
+}
+
+/* Focus state */
+.bn-block-content:focus {
+  outline: none;
+}
+
+/* Selection */
+::selection {
+  background-color: #ddd6fe;
+  color: #1f2937;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .notion-editor-wrapper {
+    padding: 1rem 1.5rem;
+  }
+}

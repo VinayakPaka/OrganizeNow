@@ -21,6 +21,13 @@ export async function PUT(
     const body = await request.json();
     const { elements, appState, files } = body;
 
+    console.log(`[Excalidraw Save] Attempting to save ${elements?.length || 0} elements for board ${id}`);
+    console.log(`[Excalidraw Save] User ID: ${user.userId}`);
+
+    if (!elements || elements.length === 0) {
+      console.log('[Excalidraw Save] Saving empty canvas - all elements have been deleted');
+    }
+
     // First check if board belongs to user
     const { data: board, error: boardError } = await supabaseAdmin
       .from('boards')
@@ -29,19 +36,35 @@ export async function PUT(
       .eq('user_id', user.userId)
       .single();
 
-    if (boardError || !board) {
+    if (boardError) {
+      console.error('[Excalidraw Save] Board query error:', boardError);
+      return errorResponse(`Board query failed: ${boardError.message}`, 404);
+    }
+
+    if (!board) {
+      console.error('[Excalidraw Save] Board not found for user');
       return errorResponse('Board not found or unauthorized', 404);
     }
 
+    console.log('[Excalidraw Save] Board verified, checking for existing block...');
+
     // Check if excalidraw data block exists
-    const { data: existingBlock } = await supabaseAdmin
+    // Use maybeSingle() instead of single() to handle multiple results gracefully
+    const { data: existingBlock, error: blockError } = await supabaseAdmin
       .from('content_blocks')
       .select('id')
       .eq('board_id', id)
       .eq('content_type', 'excalidraw_data')
-      .single();
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (blockError) {
+      console.error('[Excalidraw Save] Block query error:', blockError);
+    }
 
     if (existingBlock) {
+      console.log('[Excalidraw Save] Updating existing block:', existingBlock.id);
       // Update existing block
       const { error: updateError } = await supabaseAdmin
         .from('content_blocks')
@@ -52,12 +75,14 @@ export async function PUT(
         .eq('id', existingBlock.id);
 
       if (updateError) {
-        console.error('Update excalidraw data error:', updateError);
-        return errorResponse('Failed to update canvas data', 500);
+        console.error('[Excalidraw Save] Update error:', updateError);
+        return errorResponse(`Failed to update canvas data: ${updateError.message}`, 500);
       }
+      console.log('[Excalidraw Save] Block updated successfully');
     } else {
+      console.log('[Excalidraw Save] Creating new block...');
       // Create new block
-      const { error: createError } = await supabaseAdmin
+      const { data: newBlock, error: createError } = await supabaseAdmin
         .from('content_blocks')
         .insert({
           board_id: id,
@@ -67,17 +92,20 @@ export async function PUT(
           position_x: 0,
           position_y: 0,
           position_index: 0,
-        });
+        })
+        .select();
 
       if (createError) {
-        console.error('Create excalidraw data error:', createError);
-        return errorResponse('Failed to save canvas data', 500);
+        console.error('[Excalidraw Save] Create error:', createError);
+        return errorResponse(`Failed to save canvas data: ${createError.message}`, 500);
       }
+      console.log('[Excalidraw Save] Block created successfully:', newBlock);
     }
 
+    console.log('[Excalidraw Save] Save operation completed successfully');
     return successResponse({ message: 'Canvas saved successfully' });
   } catch (error: any) {
-    console.error('Save excalidraw data error:', error);
-    return errorResponse('Internal server error', 500);
+    console.error('[Excalidraw Save] Unexpected error:', error);
+    return errorResponse(`Internal server error: ${error.message}`, 500);
   }
 }

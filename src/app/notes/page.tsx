@@ -10,13 +10,13 @@ import {
   Page,
 } from '@/store/slices/pagesSlice';
 import { NotesList } from '@/components/notes/NotesList';
-import { RichTextEditor } from '@/components/notes/RichTextEditor';
+import { NotionEditor } from '@/components/notes/NotionEditor';
 import { Save, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 /**
  * Notes Dashboard Page
- * Notion-like notes interface with rich text editor
+ * Notion-like notes interface with BlockNote editor
  */
 export default function NotesPage() {
   const dispatch = useAppDispatch();
@@ -213,12 +213,13 @@ export default function NotesPage() {
               </div>
             </div>
 
-            {/* Rich Text Editor */}
-            <div className="flex-1 overflow-y-auto px-8 py-6 bg-white">
-              <RichTextEditor
-                content={noteContent}
+            {/* Notion-like Block Editor */}
+            <div className="flex-1 overflow-y-auto bg-white">
+              <NotionEditor
+                key={selectedNote.id}
+                initialContent={noteContent}
                 onChange={handleContentChange}
-                placeholder="Start writing your note..."
+                placeholder="Type '/' for commands..."
               />
             </div>
           </div>

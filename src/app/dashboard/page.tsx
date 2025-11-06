@@ -14,6 +14,7 @@ export default function DashboardPage() {
 
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState("");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Fetch boards on mount
   useEffect(() => {
@@ -63,8 +64,25 @@ export default function DashboardPage() {
 
   async function handleDelete(id: string, e: React.MouseEvent) {
     e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this board?")) return;
-    await dispatch(deleteBoard(id));
+    if (!confirm("Are you sure you want to delete this board and all its content?")) return;
+
+    try {
+      setDeletingId(id);
+      console.log(`[Dashboard] Starting deletion of board ${id}...`);
+      const result = await dispatch(deleteBoard(id));
+
+      if (deleteBoard.fulfilled.match(result)) {
+        console.log('[Dashboard] Board deleted successfully');
+      } else {
+        console.error('[Dashboard] Board deletion failed:', result);
+        alert('Failed to delete board. Please try again.');
+      }
+    } catch (error) {
+      console.error('[Dashboard] Error deleting board:', error);
+      alert('An error occurred while deleting the board.');
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   function handleOpenBoard(id: string) {
@@ -147,9 +165,14 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={(e) => handleDelete(board.id, e)}
-                className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/80"
+                disabled={deletingId === board.id}
+                className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/80 disabled:opacity-100 disabled:cursor-not-allowed"
               >
-                <Trash2 size={18} className="text-white" />
+                {deletingId === board.id ? (
+                  <Loader2 size={18} className="text-white animate-spin" />
+                ) : (
+                  <Trash2 size={18} className="text-white" />
+                )}
               </button>
             </div>
           ))}

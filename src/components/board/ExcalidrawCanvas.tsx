@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
 import type { AppState, BinaryFiles } from "@excalidraw/excalidraw/types/types";
@@ -30,29 +30,48 @@ export function ExcalidrawCanvas({ boardId, theme = "light" }: ExcalidrawCanvasP
     files: BinaryFiles;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load board data on mount
   useEffect(() => {
     async function loadBoard() {
       try {
         setIsLoading(true);
+        console.log(`[Excalidraw Load] Loading board ${boardId}...`);
         const result = await dispatch(fetchBoardById(boardId));
 
         if (fetchBoardById.fulfilled.match(result)) {
           const board = result.payload.board;
           const blocks = result.payload.blocks;
 
+          console.log(`[Excalidraw Load] Board loaded, found ${blocks.length} blocks`);
+          console.log('[Excalidraw Load] Block types:', blocks.map((b: any) => b.content_type));
+
           // Try to parse existing Excalidraw data from blocks
           let elements: ExcalidrawElement[] = [];
           let appState: Partial<AppState> = {};
           let files: BinaryFiles = {};
 
-          // If there's a special block with type 'excalidraw_data', use it
-          const excalidrawBlock = blocks.find((b: any) => b.content_type === 'excalidraw_data');
-          if (excalidrawBlock && excalidrawBlock.content) {
-            elements = excalidrawBlock.content.elements || [];
-            appState = excalidrawBlock.content.appState || {};
-            files = excalidrawBlock.content.files || {};
+          // Find all excalidraw_data blocks and get the most recent one
+          const excalidrawBlocks = blocks.filter((b: any) => b.content_type === 'excalidraw_data');
+
+          if (excalidrawBlocks.length > 0) {
+            // Sort by updated_at to get the most recent one
+            const sortedBlocks = excalidrawBlocks.sort((a: any, b: any) =>
+              new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+            );
+            const excalidrawBlock = sortedBlocks[0];
+
+            console.log(`[Excalidraw Load] Found ${excalidrawBlocks.length} excalidraw_data blocks, using most recent`);
+            console.log('[Excalidraw Load] Selected block:', excalidrawBlock.id);
+            console.log('[Excalidraw Load] Block updated_at:', excalidrawBlock.updated_at);
+            console.log('[Excalidraw Load] Elements count:', excalidrawBlock.content?.elements?.length || 0);
+
+            elements = excalidrawBlock.content?.elements || [];
+            appState = excalidrawBlock.content?.appState || {};
+            files = excalidrawBlock.content?.files || {};
+          } else {
+            console.log('[Excalidraw Load] No excalidraw_data block found, starting with empty canvas');
           }
 
           setInitialData({
@@ -63,9 +82,11 @@ export function ExcalidrawCanvas({ boardId, theme = "light" }: ExcalidrawCanvasP
             },
             files,
           });
+
+          console.log(`[Excalidraw Load] Initial data set with ${elements.length} elements`);
         }
       } catch (error) {
-        console.error("Error loading board:", error);
+        console.error("[Excalidraw Load] Error loading board:", error);
       } finally {
         setIsLoading(false);
       }
@@ -77,11 +98,21 @@ export function ExcalidrawCanvas({ boardId, theme = "light" }: ExcalidrawCanvasP
   // Auto-save handler with debounce
   const handleChange = useCallback(
     (elements: readonly ExcalidrawElement[], appState: AppState, files: BinaryFiles) => {
-      // Debounce auto-save
-      const saveTimeout = setTimeout(async () => {
+      // Clear previous timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
+      // Set new timeout for auto-save
+      saveTimeoutRef.current = setTimeout(async () => {
         try {
-          // Only save if there are elements to save
-          if (elements.length === 0) return;
+          console.log(`[Excalidraw] Auto-saving ${elements.length} elements...`);
+
+          if (elements.length === 0) {
+            console.log("[Excalidraw] Saving empty canvas (all elements deleted)");
+          } else {
+            console.log("[Excalidraw] Elements:", elements.map(e => ({ type: e.type, id: e.id })));
+          }
 
           // Save to API - we'll use a special content_type for Excalidraw data
           const response = await fetch(`/api/boards/${boardId}/excalidraw`, {
@@ -105,18 +136,30 @@ export function ExcalidrawCanvas({ boardId, theme = "light" }: ExcalidrawCanvasP
             }),
           });
 
-          if (!response.ok) {
-            console.error("Failed to save board:", await response.text());
+          if (response.ok) {
+            const result = await response.json();
+            console.log("[Excalidraw] Canvas saved successfully:", result);
+          } else {
+            const errorText = await response.text();
+            console.error("[Excalidraw] Failed to save board. Status:", response.status);
+            console.error("[Excalidraw] Error response:", errorText);
           }
         } catch (error) {
-          console.error("Error auto-saving board:", error);
+          console.error("[Excalidraw] Error auto-saving board:", error);
         }
       }, 2000); // Auto-save after 2 seconds of inactivity
-
-      return () => clearTimeout(saveTimeout);
     },
     [boardId]
   );
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (isLoading) {
     return (

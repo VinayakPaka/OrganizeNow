@@ -1,11 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!; // In production, use service role key
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+if (!supabaseServiceKey) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY is not set in environment variables');
+}
 
 /**
  * Supabase admin client for server-side operations
- * This bypasses Row Level Security (RLS) policies
+ * Uses service role key to bypass Row Level Security (RLS) policies
  */
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
   auth: {

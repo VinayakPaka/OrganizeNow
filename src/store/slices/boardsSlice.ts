@@ -19,7 +19,7 @@ export interface ContentBlock {
   user_id: string;
   board_id: string;
   parent_id?: string;
-  content_type: 'text' | 'image' | 'shape' | 'grid';
+  content_type: 'text' | 'image' | 'shape' | 'grid' | 'excalidraw_data';
   content: Record<string, any>;
   position_x: number;
   position_y: number;
@@ -55,7 +55,7 @@ interface UpdateBoardData {
 
 interface CreateBlockData {
   board_id: string;
-  content_type: 'text' | 'image' | 'shape' | 'grid';
+  content_type: 'text' | 'image' | 'shape' | 'grid' | 'excalidraw_data';
   content: Record<string, any>;
   position_x?: number;
   position_y?: number;
