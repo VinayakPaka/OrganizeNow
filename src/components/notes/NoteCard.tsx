@@ -18,10 +18,43 @@ interface NoteCardProps {
 export function NoteCard({ note, onClick, onDelete, isActive }: NoteCardProps) {
   const [showMenu, setShowMenu] = useState(false);
 
-  // Extract plain text preview from HTML content
-  const getPreview = (html: string) => {
-    const text = html.replace(/<[^>]*>/g, '');
-    return text.length > 100 ? text.substring(0, 100) + '...' : text;
+  // Extract plain text preview from BlockNote JSON content
+  const getPreview = (content: string) => {
+    if (!content) return 'No content';
+
+    try {
+      // Try to parse as BlockNote JSON
+      const blocks = JSON.parse(content);
+
+      if (Array.isArray(blocks)) {
+        // Extract text from all blocks
+        const textParts: string[] = [];
+
+        blocks.forEach((block: any) => {
+          if (block.content) {
+            if (Array.isArray(block.content)) {
+              // Extract text from content array
+              block.content.forEach((item: any) => {
+                if (item.type === 'text' && item.text) {
+                  textParts.push(item.text);
+                }
+              });
+            }
+          }
+        });
+
+        const text = textParts.join(' ').trim();
+        if (text.length === 0) return 'Empty note';
+        return text.length > 100 ? text.substring(0, 100) + '...' : text;
+      }
+    } catch (e) {
+      // If JSON parsing fails, treat as plain text/HTML
+      const text = content.replace(/<[^>]*>/g, '').trim();
+      if (text.length === 0) return 'Empty note';
+      return text.length > 100 ? text.substring(0, 100) + '...' : text;
+    }
+
+    return 'Empty note';
   };
 
   // Format date
@@ -95,11 +128,9 @@ export function NoteCard({ note, onClick, onDelete, isActive }: NoteCardProps) {
       </div>
 
       {/* Preview */}
-      {note.content && (
-        <p className="text-sm text-gray-600 line-clamp-2 mb-2">
-          {getPreview(note.content)}
-        </p>
-      )}
+      <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+        {getPreview(note.content)}
+      </p>
 
       {/* Footer */}
       <div className="text-xs text-gray-500">
