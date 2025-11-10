@@ -24,12 +24,16 @@ export function PasswordCard({
   decryptedPassword,
 }: PasswordCardProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [copiedField, setCopiedField] = useState<'username' | 'password' | null>(null);
 
-  const handleCopy = async (text: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async (text: string, field: 'username' | 'password') => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch (error) {
+      console.error('Failed to copy to clipboard:', error);
+    }
   };
 
   const handleTogglePassword = () => {
@@ -47,6 +51,19 @@ export function PasswordCard({
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  };
+
+  // Format date safely
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return 'Recently updated';
+      }
+      return date.toLocaleDateString();
+    } catch {
+      return 'Recently updated';
+    }
   };
 
   return (
@@ -86,6 +103,7 @@ export function PasswordCard({
             onClick={onEdit}
             className="p-2 hover:bg-gray-100 rounded-lg transition"
             title="Edit"
+            aria-label="Edit password"
           >
             <Edit size={16} className="text-gray-600" />
           </button>
@@ -94,6 +112,7 @@ export function PasswordCard({
             onClick={onDelete}
             className="p-2 hover:bg-red-50 rounded-lg transition"
             title="Delete"
+            aria-label="Delete password"
           >
             <Trash2 size={16} className="text-red-600" />
           </button>
@@ -107,11 +126,12 @@ export function PasswordCard({
           <span className="text-sm text-gray-900">{password.username}</span>
           <button
             type="button"
-            onClick={() => handleCopy(password.username)}
+            onClick={() => handleCopy(password.username, 'username')}
             className="p-1 hover:bg-gray-200 rounded transition"
             title="Copy username"
+            aria-label="Copy username"
           >
-            {copied ? (
+            {copiedField === 'username' ? (
               <CheckCircle size={14} className="text-green-600" />
             ) : (
               <Copy size={14} className="text-gray-600" />
@@ -131,11 +151,12 @@ export function PasswordCard({
             {showPassword && decryptedPassword && (
               <button
                 type="button"
-                onClick={() => handleCopy(decryptedPassword)}
+                onClick={() => handleCopy(decryptedPassword, 'password')}
                 className="p-1 hover:bg-gray-200 rounded transition"
                 title="Copy password"
+                aria-label="Copy password"
               >
-                {copied ? (
+                {copiedField === 'password' ? (
                   <CheckCircle size={14} className="text-green-600" />
                 ) : (
                   <Copy size={14} className="text-gray-600" />
@@ -147,6 +168,7 @@ export function PasswordCard({
               onClick={handleTogglePassword}
               className="p-1 hover:bg-gray-200 rounded transition"
               title={showPassword ? 'Hide password' : 'Show password'}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
                 <EyeOff size={14} className="text-gray-600" />
@@ -171,7 +193,7 @@ export function PasswordCard({
       {/* Footer */}
       <div className="mt-4 pt-3 border-t border-gray-100">
         <div className="text-xs text-gray-500">
-          Updated {new Date(password.updated_at).toLocaleDateString()}
+          Updated {formatDate(password.updated_at)}
         </div>
       </div>
     </div>

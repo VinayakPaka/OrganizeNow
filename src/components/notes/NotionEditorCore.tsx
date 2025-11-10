@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { PartialBlock } from "@blocknote/core";
+import { useEffect, useMemo, useImperativeHandle, forwardRef } from "react";
+import { PartialBlock, BlockNoteEditor } from "@blocknote/core";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
+import "@blocknote/core/style.css";
 import "@blocknote/mantine/style.css";
-import "@blocknote/core/fonts/inter.css";
 
 interface NotionEditorCoreProps {
   initialContent?: string;
@@ -14,16 +14,21 @@ interface NotionEditorCoreProps {
   placeholder?: string;
 }
 
+export interface NotionEditorHandle {
+  insertText: (text: string) => void;
+  getEditor: () => BlockNoteEditor | null;
+}
+
 /**
  * BlockNote Editor Component
  * Uses the latest BlockNote with Mantine UI
  */
-export function NotionEditorCore({
+export const NotionEditorCore = forwardRef<NotionEditorHandle, NotionEditorCoreProps>(({
   initialContent,
   onChange,
   editable = true,
   placeholder = "Type '/' for commands...",
-}: NotionEditorCoreProps) {
+}, ref) => {
   // Parse initial content
   const initialBlocks = useMemo(() => {
     if (!initialContent) {
@@ -49,6 +54,44 @@ export function NotionEditorCore({
     initialContent: initialBlocks,
   });
 
+  // Expose editor methods via ref
+  useImperativeHandle(ref, () => ({
+    insertText: (text: string) => {
+      if (!editor) return;
+
+      try {
+        // Get cursor position safely
+        const cursorPosition = editor.getTextCursorPosition();
+        if (!cursorPosition || !cursorPosition.block) {
+          console.warn('[NotionEditor] No valid cursor position, appending to end');
+          // If no cursor position, append to end
+          editor.insertBlocks([
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text, styles: {} }],
+            },
+          ]);
+          return;
+        }
+
+        // Insert a new paragraph block with the text at the current cursor position
+        editor.insertBlocks(
+          [
+            {
+              type: 'paragraph',
+              content: [{ type: 'text', text, styles: {} }],
+            },
+          ],
+          cursorPosition.block,
+          'after'
+        );
+      } catch (error) {
+        console.error('[NotionEditor] Failed to insert text:', error);
+      }
+    },
+    getEditor: () => editor,
+  }), [editor]);
+
   // Listen to changes
   useEffect(() => {
     if (!editor) return;
@@ -73,8 +116,12 @@ export function NotionEditorCore({
   }
 
   return (
-    <div className="notion-editor-wrapper min-h-[500px]">
-      <BlockNoteView editor={editor} editable={editable} theme="light" />
+    <div className="notion-editor-wrapper" style={{ height: '100%', width: '100%' }}>
+      <BlockNoteView
+        editor={editor}
+        editable={editable}
+        theme="light"
+      />
     </div>
   );
-}
+});

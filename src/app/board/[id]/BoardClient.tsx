@@ -90,6 +90,8 @@ export default function BoardClient({ id }: { id: string }) {
         {/* Theme Toggle Button */}
         <button
           onClick={toggleTheme}
+          aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+          aria-pressed={theme === "dark"}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -114,7 +116,7 @@ export default function BoardClient({ id }: { id: string }) {
           }}
           title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
         >
-          {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+          {theme === "light" ? <Moon size={18} aria-hidden="true" /> : <Sun size={18} aria-hidden="true" />}
         </button>
       </div>
 

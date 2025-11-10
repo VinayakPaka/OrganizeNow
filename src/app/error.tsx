@@ -6,8 +6,8 @@ import { useEffect } from 'react';
  * Global error boundary
  * Catches errors like MetaMask injection issues
  */
-export default function Error({
-  error,
+export default function ErrorBoundary({
+  error: err,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -15,13 +15,13 @@ export default function Error({
 }) {
   useEffect(() => {
     // Log error but ignore MetaMask errors
-    if (!error.message.includes('MetaMask')) {
-      console.error('Application error:', error);
+    if (!err.message.includes('MetaMask')) {
+      console.error('Application error:', err);
     }
-  }, [error]);
+  }, [err]);
 
   // Don't show UI for MetaMask errors
-  if (error.message.includes('MetaMask') || error.message.includes('ethereum')) {
+  if (err.message.includes('MetaMask') || err.message.includes('ethereum')) {
     return null;
   }
 
@@ -30,7 +30,7 @@ export default function Error({
       <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
         <div className="text-6xl mb-4">⚠️</div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong!</h2>
-        <p className="text-gray-600 mb-6">{error.message}</p>
+        <p className="text-gray-600 mb-6">{err.message}</p>
         <button
           onClick={reset}
           className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition"

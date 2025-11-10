@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import pagesReducer from './slices/pagesSlice';
 import boardsReducer from './slices/boardsSlice';
 import passwordsReducer from './slices/passwordsSlice';
+import tasksReducer from './slices/tasksSlice';
 
 /**
  * Redux store configuration
@@ -13,6 +14,7 @@ export const store = configureStore({
     pages: pagesReducer,
     boards: boardsReducer,
     passwords: passwordsReducer,
+    tasks: tasksReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

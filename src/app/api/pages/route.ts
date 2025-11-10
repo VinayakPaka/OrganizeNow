@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       return errorResponse(validationError || 'Invalid input');
     }
 
-    const { title, content, icon } = validatedData;
+    const { title, content, icon, is_archived } = validatedData;
 
     // Create page
     const { data: newPage, error: createError } = await supabaseAdmin
@@ -67,6 +67,7 @@ export async function POST(request: NextRequest) {
         title,
         content: content || '',
         icon: icon || null,
+        is_archived: is_archived || false,
       })
       .select()
       .single();

@@ -1,20 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle, useRef, ComponentType } from "react";
 import dynamic from "next/dynamic";
-
-// Dynamically import the core editor component with SSR disabled
-const NotionEditorCore = dynamic(
-  () => import("./NotionEditorCore").then(mod => ({ default: mod.NotionEditorCore })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex items-center justify-center h-full p-8">
-        <div className="text-gray-500">Loading editor...</div>
-      </div>
-    )
-  }
-);
+import { NotionEditorHandle } from "./NotionEditorCore";
 
 interface NotionEditorProps {
   initialContent?: string;
@@ -22,6 +10,8 @@ interface NotionEditorProps {
   editable?: boolean;
   placeholder?: string;
 }
+
+export type { NotionEditorHandle };
 
 /**
  * Notion-like Block Editor Component
@@ -36,20 +26,41 @@ interface NotionEditorProps {
  * - Tables, images, code blocks
  * - Keyboard shortcuts
  */
-export function NotionEditor({
+export const NotionEditor = forwardRef<NotionEditorHandle, NotionEditorProps>(({
   initialContent,
   onChange,
   editable = true,
   placeholder = "Type '/' for commands...",
-}: NotionEditorProps) {
+}, ref) => {
   const [isMounted, setIsMounted] = useState(false);
+  const [EditorComponent, setEditorComponent] = useState<ComponentType<any> | null>(null);
+  const editorRef = useRef<NotionEditorHandle>(null);
 
-  // Wait for client-side mount
+  // Expose the editor ref methods
+  useImperativeHandle(ref, () => ({
+    insertText: (text: string) => {
+      if (editorRef.current) {
+        editorRef.current.insertText(text);
+      } else {
+        console.error('[NotionEditor] Editor ref not ready');
+      }
+    },
+    getEditor: () => {
+      return editorRef.current?.getEditor() || null;
+    },
+  }), []);
+
+  // Wait for client-side mount and load component
   useEffect(() => {
     setIsMounted(true);
+
+    // Dynamically import the editor
+    import("./NotionEditorCore").then((mod) => {
+      setEditorComponent(() => mod.NotionEditorCore);
+    });
   }, []);
 
-  if (!isMounted) {
+  if (!isMounted || !EditorComponent) {
     return (
       <div className="flex items-center justify-center h-full p-8">
         <div className="text-gray-500">Loading editor...</div>
@@ -58,11 +69,12 @@ export function NotionEditor({
   }
 
   return (
-    <NotionEditorCore
+    <EditorComponent
+      ref={editorRef}
       initialContent={initialContent}
       onChange={onChange}
       editable={editable}
       placeholder={placeholder}
     />
   );
-}
+});

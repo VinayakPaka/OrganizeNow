@@ -1,201 +1,172 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchBoards, createBoard, deleteBoard } from "@/store/slices/boardsSlice";
-import { Plus, Trash2, Loader2 } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/store/hooks';
+import {
+  FileText,
+  Grid3x3,
+  Calendar as CalendarIcon,
+  CheckSquare,
+  Lock,
+  Sparkles,
+  ArrowRight,
+  TrendingUp
+} from 'lucide-react';
 
 export default function DashboardPage() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const { boards, isLoading } = useAppSelector((state) => state.boards);
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state) => state.auth);
 
-  const [showCreate, setShowCreate] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const features = [
+    {
+      icon: FileText,
+      title: 'Notes',
+      description: 'Capture ideas with powerful block-based editor',
+      color: 'from-blue-500 to-cyan-500',
+      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+      iconColor: 'text-blue-600 dark:text-blue-400',
+      route: '/notes',
+      stats: 'Rich text editing',
+    },
+    {
+      icon: Grid3x3,
+      title: 'Whiteboards',
+      description: 'Visualize ideas with infinite canvas',
+      color: 'from-purple-500 to-pink-500',
+      bgColor: 'bg-purple-50 dark:bg-purple-900/20',
+      iconColor: 'text-purple-600 dark:text-purple-400',
+      route: '/whiteboards',
+      stats: 'Collaborative boards',
+    },
+    {
+      icon: CalendarIcon,
+      title: 'Calendar',
+      description: 'Daily notes and time management',
+      color: 'from-green-500 to-emerald-500',
+      bgColor: 'bg-green-50 dark:bg-green-900/20',
+      iconColor: 'text-green-600 dark:text-green-400',
+      route: '/calendar',
+      stats: 'Daily journaling',
+    },
+    {
+      icon: CheckSquare,
+      title: 'Tasks',
+      description: 'Manage todos and track progress',
+      color: 'from-orange-500 to-red-500',
+      bgColor: 'bg-orange-50 dark:bg-orange-900/20',
+      iconColor: 'text-orange-600 dark:text-orange-400',
+      route: '/tasks',
+      stats: 'Stay organized',
+    },
+    {
+      icon: Lock,
+      title: 'Password Vault',
+      description: 'Securely store your passwords',
+      color: 'from-red-500 to-rose-500',
+      bgColor: 'bg-red-50 dark:bg-red-900/20',
+      iconColor: 'text-red-600 dark:text-red-400',
+      route: '/vault',
+      stats: 'Encrypted storage',
+    },
+    {
+      icon: Sparkles,
+      title: 'AI Assistant',
+      description: 'Smart search and content generation',
+      color: 'from-violet-500 to-purple-500',
+      bgColor: 'bg-violet-50 dark:bg-violet-900/20',
+      iconColor: 'text-violet-600 dark:text-violet-400',
+      route: '/ai',
+      stats: 'Powered by Gemini',
+    },
+  ];
 
-  // Fetch boards on mount
-  useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchBoards());
-    }
-  }, [dispatch, isAuthenticated]);
+  const quickStats = [
+    { label: 'Productivity', value: '85%', icon: TrendingUp, color: 'text-green-600 dark:text-green-400' },
+  ];
 
-  // Sort boards alphabetically
-  const sortedBoards = useMemo(() => {
-    return [...boards].sort((a, b) => a.title.localeCompare(b.title));
-  }, [boards]);
-
-  async function handleCreate(e: React.FormEvent) {
-    e.preventDefault();
-    if (!newTitle.trim()) return;
-
-    try {
-      const colors = [
-        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-        "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
-        "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
-        "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
-        "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
-        "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
-      ];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
-
-      const result = await dispatch(createBoard({
-        title: newTitle,
-        color: randomColor
-      }));
-
-      if (createBoard.fulfilled.match(result)) {
-        setNewTitle("");
-        setShowCreate(false);
-      } else if (createBoard.rejected.match(result)) {
-        const errorMessage = result.payload as string || 'Failed to create board';
-        console.error('Failed to create board:', errorMessage);
-        alert(`Failed to create board: ${errorMessage}`);
-      }
-    } catch (error) {
-      console.error('Error creating board:', error);
-      alert('An error occurred while creating the board.');
-    }
-  }
-
-  async function handleDelete(id: string, e: React.MouseEvent) {
-    e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this board and all its content?")) return;
-
-    try {
-      setDeletingId(id);
-      console.log(`[Dashboard] Starting deletion of board ${id}...`);
-      const result = await dispatch(deleteBoard(id));
-
-      if (deleteBoard.fulfilled.match(result)) {
-        console.log('[Dashboard] Board deleted successfully');
-      } else {
-        console.error('[Dashboard] Board deletion failed:', result);
-        alert('Failed to delete board. Please try again.');
-      }
-    } catch (error) {
-      console.error('[Dashboard] Error deleting board:', error);
-      alert('An error occurred while deleting the board.');
-    } finally {
-      setDeletingId(null);
-    }
-  }
-
-  function handleOpenBoard(id: string) {
-    router.push(`/board/${id}`);
-  }
-
-  // Show boards grid
   return (
-    <div className="space-y-6">
-      {/* Header with Create Button */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Boards</h1>
-          <p className="text-gray-500 mt-1">Organize your tasks and ideas visually</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Welcome Header */}
+        <div className="mb-12">
+          <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-3">
+            Welcome back{user ? `, ${user.name || user.email.split('@')[0]}` : ''}! 👋
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300">
+            Your personal productivity workspace
+          </p>
         </div>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-violet-600 text-white px-6 py-3 font-medium shadow-lg hover:shadow-xl transition-all hover:scale-105"
-        >
-          <Plus size={20} />
-          Create Board
-        </button>
-      </div>
 
-      {/* Create Board Modal */}
-      {showCreate && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowCreate(false)}>
-          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-xl font-bold mb-4">Create New Board</h2>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <input
-                autoFocus
-                type="text"
-                placeholder="Board title..."
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <div className="flex gap-2 justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowCreate(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isLoading || !newTitle.trim()}
-                  className="px-6 py-2 bg-gradient-to-r from-purple-500 to-violet-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? "Creating..." : "Create"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Loading State */}
-      {isLoading && boards.length === 0 && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-purple-600" size={48} />
-        </div>
-      )}
-
-      {/* Boards Grid - Sorted Alphabetically */}
-      {!isLoading && sortedBoards.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {sortedBoards.map((board) => (
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {quickStats.map((stat, index) => (
             <div
-              key={board.id}
-              onClick={() => handleOpenBoard(board.id)}
-              className="group relative aspect-square rounded-2xl shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden border border-gray-100 hover:scale-105"
-              style={{ background: board.color || "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}
+              key={index}
+              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <h3 className="text-xl font-bold text-white drop-shadow-lg">{board.title}</h3>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{stat.label}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                </div>
+                <stat.icon className={`${stat.color}`} size={40} />
               </div>
-              <button
-                onClick={(e) => handleDelete(board.id, e)}
-                disabled={deletingId === board.id}
-                className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500/80 disabled:opacity-100 disabled:cursor-not-allowed"
-              >
-                {deletingId === board.id ? (
-                  <Loader2 size={18} className="text-white animate-spin" />
-                ) : (
-                  <Trash2 size={18} className="text-white" />
-                )}
-              </button>
             </div>
           ))}
-        </div>
-      )}
 
-      {/* Empty State */}
-      {!isLoading && sortedBoards.length === 0 && (
-        <div className="text-center py-20">
-          <div className="text-gray-400 text-6xl mb-4">📋</div>
-          <h3 className="text-xl font-semibold text-gray-600 mb-2">No boards yet</h3>
-          <p className="text-gray-500 mb-6">Create your first board to get started!</p>
-          <button
-            onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-violet-600 text-white px-6 py-3 font-medium"
-          >
-            <Plus size={20} />
-            Create Your First Board
-          </button>
+          <div className="md:col-span-2 bg-gradient-to-r from-purple-500 to-violet-600 rounded-2xl p-6 shadow-lg text-white">
+            <h3 className="text-2xl font-bold mb-2">🚀 All Your Tools in One Place</h3>
+            <p className="text-purple-100">
+              Access notes, whiteboards, calendar, tasks, passwords, and AI assistance seamlessly.
+            </p>
+          </div>
         </div>
-      )}
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature, index) => (
+            <button
+              key={index}
+              onClick={() => router.push(feature.route)}
+              className="group relative bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-200 dark:border-gray-700 text-left overflow-hidden"
+            >
+              {/* Background gradient on hover */}
+              <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+
+              {/* Icon */}
+              <div className={`${feature.bgColor} w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <feature.icon className={feature.iconColor} size={32} />
+              </div>
+
+              {/* Content */}
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-violet-600 transition-all duration-300">
+                {feature.title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
+                {feature.description}
+              </p>
+
+              {/* Stats */}
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500 dark:text-gray-500">
+                  {feature.stats}
+                </span>
+                <ArrowRight
+                  className="text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 group-hover:translate-x-1 transition-all duration-300"
+                  size={20}
+                />
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* Footer Info */}
+        <div className="mt-12 text-center">
+          <p className="text-gray-500 dark:text-gray-400">
+            ✨ Powered by cutting-edge technology for your productivity
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
-
-

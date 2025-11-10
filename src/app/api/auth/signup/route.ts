@@ -11,7 +11,12 @@ import { errorResponse, successResponse } from '@/lib/middleware/auth';
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return errorResponse('Invalid JSON in request body', 400);
+    }
 
     // Validate request body
     const { data: validatedData, error: validationError } = await validateBody(

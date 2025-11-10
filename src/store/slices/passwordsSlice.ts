@@ -20,7 +20,7 @@ interface PasswordsState {
   error: string | null;
 }
 
-interface CreatePasswordData {
+export interface CreatePasswordData {
   service_name: string;
   username: string;
   password: string;
@@ -28,7 +28,7 @@ interface CreatePasswordData {
   notes?: string;
 }
 
-interface UpdatePasswordData {
+export interface UpdatePasswordData {
   id: string;
   service_name?: string;
   username?: string;

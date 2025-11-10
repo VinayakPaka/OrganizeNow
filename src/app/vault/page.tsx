@@ -10,6 +10,8 @@ import {
   deletePassword,
   searchPasswords,
   Password,
+  CreatePasswordData,
+  UpdatePasswordData,
 } from '@/store/slices/passwordsSlice';
 import { PasswordCard } from '@/components/vault/PasswordCard';
 import { PasswordForm } from '@/components/vault/PasswordForm';
@@ -70,7 +72,7 @@ export default function VaultPage() {
   };
 
   // Handle create password
-  const handleCreatePassword = async (data: any) => {
+  const handleCreatePassword = async (data: CreatePasswordData) => {
     const result = await dispatch(createPassword(data));
 
     if (createPassword.fulfilled.match(result)) {
@@ -85,7 +87,7 @@ export default function VaultPage() {
   };
 
   // Handle update password
-  const handleUpdatePassword = async (data: any) => {
+  const handleUpdatePassword = async (data: Omit<UpdatePasswordData, 'id'>) => {
     if (!editingPassword) return;
 
     const result = await dispatch(
@@ -129,15 +131,15 @@ export default function VaultPage() {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-8 py-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3 mb-2">
-                <Shield className="text-purple-600" size={32} />
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3 mb-2">
+                <Shield className="text-purple-600 dark:text-purple-400" size={32} />
                 Password Vault
               </h1>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Securely store and manage your passwords with AES encryption
               </p>
             </div>
@@ -155,7 +157,7 @@ export default function VaultPage() {
           {/* Search Bar */}
           <div className="relative max-w-md">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
               size={20}
             />
             <input
@@ -163,11 +165,11 @@ export default function VaultPage() {
               placeholder="Search passwords by service name or username..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
             />
             {isSearching && (
               <Loader2
-                className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-purple-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-purple-600 dark:text-purple-400"
                 size={20}
               />
             )}
@@ -176,19 +178,19 @@ export default function VaultPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto bg-gray-50 px-8 py-6">
+      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 px-8 py-6">
         <div className="max-w-7xl mx-auto">
           {isLoading && passwords.length === 0 ? (
             <div className="flex items-center justify-center h-64">
-              <Loader2 className="animate-spin text-purple-600" size={48} />
+              <Loader2 className="animate-spin text-purple-600 dark:text-purple-400" size={48} />
             </div>
           ) : passwords.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center">
-              <Lock size={64} className="text-gray-300 mb-4" />
-              <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              <Lock size={64} className="text-gray-300 dark:text-gray-600 mb-4" />
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
                 {searchQuery ? 'No passwords found' : 'No passwords yet'}
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
                 {searchQuery
                   ? 'Try a different search term'
                   : 'Start by adding your first password to the vault'}
@@ -220,7 +222,7 @@ export default function VaultPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <div className="mt-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}

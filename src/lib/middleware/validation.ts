@@ -35,6 +35,7 @@ export const pageSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   content: z.string().optional(),
   icon: z.string().optional(),
+  is_archived: z.boolean().optional(),
 });
 
 export const boardSchema = z.object({

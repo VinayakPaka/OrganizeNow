@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X, Eye, EyeOff, RefreshCw } from 'lucide-react';
 
 interface PasswordFormProps {
@@ -40,6 +40,19 @@ export function PasswordForm({
   const [url, setUrl] = useState(initialData?.url || '');
   const [notes, setNotes] = useState(initialData?.notes || '');
   const [showPassword, setShowPassword] = useState(false);
+  const [urlError, setUrlError] = useState('');
+
+  /**
+   * Fisher-Yates shuffle algorithm for unbiased randomization
+   */
+  const fisherYatesShuffle = (array: string[]): string[] => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
 
   // Generate random password
   const generatePassword = () => {
@@ -58,11 +71,9 @@ export function PasswordForm({
       newPassword += charset[Math.floor(Math.random() * charset.length)];
     }
 
-    // Shuffle
-    newPassword = newPassword
-      .split('')
-      .sort(() => Math.random() - 0.5)
-      .join('');
+    // Shuffle using Fisher-Yates algorithm for unbiased randomization
+    const shuffled = fisherYatesShuffle(newPassword.split(''));
+    newPassword = shuffled.join('');
 
     setPassword(newPassword);
     setShowPassword(true);
@@ -87,11 +98,31 @@ export function PasswordForm({
 
   const strength = getPasswordStrength(password);
 
+  // Handle URL change with validation
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setUrl(value);
+    if (urlError) {
+      setUrlError('');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!serviceName || !username || !password) {
       return;
+    }
+
+    // Validate URL if provided
+    if (url && url.trim()) {
+      try {
+        new URL(url);
+        setUrlError('');
+      } catch (error) {
+        setUrlError('Please enter a valid URL (e.g., https://example.com)');
+        return;
+      }
     }
 
     onSubmit({
@@ -224,11 +255,23 @@ export function PasswordForm({
               id="url"
               type="url"
               value={url}
-              onChange={(e) => setUrl(e.target.value)}
+              onChange={handleUrlChange}
               placeholder="https://example.com"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent ${
+                urlError
+                  ? 'border-red-300 focus:ring-red-500'
+                  : 'border-gray-300 focus:ring-purple-500'
+              }`}
               disabled={isLoading}
+              aria-invalid={!!urlError}
+              aria-describedby={urlError ? 'url-error' : undefined}
             />
+            {urlError && (
+              <p id="url-error" className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                <X size={14} />
+                {urlError}
+              </p>
+            )}
           </div>
 
           {/* Notes */}
@@ -260,7 +303,7 @@ export function PasswordForm({
             <button
               type="submit"
               className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isLoading}
+              disabled={isLoading || !!urlError}
             >
               {isLoading ? 'Saving...' : 'Save Password'}
             </button>

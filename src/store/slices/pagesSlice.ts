@@ -23,6 +23,7 @@ interface CreatePageData {
   title: string;
   content?: string;
   icon?: string;
+  is_archived?: boolean;
 }
 
 interface UpdatePageData {
