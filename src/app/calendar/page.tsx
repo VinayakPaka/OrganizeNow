@@ -12,7 +12,7 @@ import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { NotionEditor, NotionEditorHandle } from '@/components/notes/NotionEditor';
-import { Loader2, Calendar as CalendarIcon, X, Save, Trash2 } from 'lucide-react';
+import { Loader2, Calendar as CalendarIcon, X, Save, Trash2, Bell, Settings, Search } from 'lucide-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const locales = {
@@ -57,11 +57,10 @@ export default function CalendarPage() {
     }
   }, [dispatch, isAuthenticated]);
 
-  // Convert pages to calendar events (only archived pages with dates - calendar notes)
+  // Convert pages to calendar events
   const events: CalendarEvent[] = useMemo(() => {
     return pages
       .filter((page) => {
-        // Filter only archived pages (calendar notes) that have a date in the title
         const dateMatch = page.title.match(/\d{4}-\d{2}-\d{2}/);
         return page.is_archived && dateMatch !== null;
       })
@@ -71,13 +70,11 @@ export default function CalendarPage() {
         const date = new Date(dateStr);
         date.setHours(10, 0, 0, 0);
 
-        // Extract preview from content (first 50 chars of text content)
         let preview = 'Notes';
         if (page.content) {
           try {
             const blocks = JSON.parse(page.content);
             if (Array.isArray(blocks) && blocks.length > 0) {
-              // Find first block with text content
               for (const block of blocks) {
                 if (block.content && Array.isArray(block.content)) {
                   const text = block.content
@@ -94,7 +91,6 @@ export default function CalendarPage() {
               }
             }
           } catch (e) {
-            // If content is not JSON, use it as-is
             if (page.content.trim()) {
               preview = page.content.length > 50
                 ? page.content.substring(0, 50) + '...'
@@ -113,20 +109,15 @@ export default function CalendarPage() {
       });
   }, [pages]);
 
-  // Handle date selection
   const handleSelectSlot = ({ start }: { start: Date; action: 'select' | 'click' | 'doubleClick' }) => {
     const dateStr = format(start, 'yyyy-MM-dd');
-
-    // Check if calendar note exists for this date (only archived notes)
     const existingNote = pages.find((page) => page.is_archived && page.title.includes(dateStr));
 
     if (existingNote) {
-      // Open existing note
       setSelectedNote(existingNote);
       setNoteTitle(existingNote.title);
       setNoteContent(existingNote.content);
     } else {
-      // Create new note for this date
       const newTitle = `Daily Note - ${dateStr}`;
       setSelectedNote(null);
       setNoteTitle(newTitle);
@@ -136,7 +127,6 @@ export default function CalendarPage() {
     setSelectedDate(start);
   };
 
-  // Handle event click
   const handleSelectEvent = (event: CalendarEvent) => {
     setSelectedNote(event.resource);
     setNoteTitle(event.resource.title);
@@ -144,7 +134,6 @@ export default function CalendarPage() {
     setSelectedDate(event.start);
   };
 
-  // Handle save note
   const handleSaveNote = async () => {
     if (!selectedDate) return;
 
@@ -152,24 +141,21 @@ export default function CalendarPage() {
 
     try {
       if (selectedNote) {
-        // Update existing note - preserve is_archived flag
         const result = await dispatch(
           updatePage({
             id: selectedNote.id,
             title: noteTitle,
             content: noteContent,
-            is_archived: true, // Keep it archived so it won't show in /notes
+            is_archived: true,
           })
         );
 
         if (updatePage.fulfilled.match(result)) {
           console.log('[Calendar] Note updated successfully');
         } else {
-          console.error('[Calendar] Failed to update note:', result);
           alert('Failed to save note. Please try again.');
         }
       } else {
-        // Create new calendar note (archived so it won't show in /notes)
         const result = await dispatch(
           createPage({
             title: noteTitle,
@@ -181,21 +167,17 @@ export default function CalendarPage() {
 
         if (createPage.fulfilled.match(result)) {
           setSelectedNote(result.payload);
-          console.log('[Calendar] Note created successfully:', result.payload);
         } else {
-          console.error('[Calendar] Failed to create note:', result);
           alert('Failed to save note. Please try again.');
         }
       }
     } catch (error) {
-      console.error('[Calendar] Error saving note:', error);
       alert('An error occurred while saving. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Handle delete note
   const handleDeleteNote = async () => {
     if (!selectedNote || isDeleting) return;
 
@@ -205,14 +187,11 @@ export default function CalendarPage() {
         const result = await dispatch(deletePage(selectedNote.id));
 
         if (deletePage.fulfilled.match(result)) {
-          console.log('[Calendar] Note deleted successfully');
           handleClose();
         } else {
-          console.error('[Calendar] Failed to delete note:', result);
           alert('Failed to delete note. Please try again.');
         }
       } catch (error) {
-        console.error('[Calendar] Error deleting note:', error);
         alert('An error occurred while deleting. Please try again.');
       } finally {
         setIsDeleting(false);
@@ -220,7 +199,6 @@ export default function CalendarPage() {
     }
   };
 
-  // Handle close modal
   const handleClose = () => {
     setSelectedDate(null);
     setSelectedNote(null);
@@ -228,16 +206,15 @@ export default function CalendarPage() {
     setNoteContent('');
   };
 
-  // Custom event styling
   const eventStyleGetter = () => {
     return {
       style: {
-        backgroundColor: '#9333ea',
-        borderColor: '#7c3aed',
-        borderLeft: '3px solid #7c3aed',
+        backgroundColor: '#3b82f6',
+        borderColor: '#2563eb',
+        borderLeft: '3px solid #2563eb',
         color: 'white',
-        borderRadius: '4px',
-        padding: '2px 4px',
+        borderRadius: '8px',
+        padding: '3px 6px',
         fontSize: '11px',
         fontWeight: '500',
       },
@@ -245,28 +222,49 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-8 py-6">
-        <div className="flex items-center gap-3">
-          <CalendarIcon size={32} className="text-purple-600 dark:text-purple-400" />
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Calendar</h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Click on any date to create or view daily notes
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Top Header Bar */}
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                <span className="text-white text-xl">📅</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Calendar</h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Track your daily notes</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="pl-10 pr-4 py-2 bg-gray-100 dark:bg-gray-700 border-0 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 text-gray-900 dark:text-gray-100 placeholder-gray-500"
+                />
+              </div>
+              <button className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                <Bell size={18} className="text-gray-600 dark:text-gray-300" />
+              </button>
+              <button className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                <Settings size={18} className="text-gray-600 dark:text-gray-300" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Calendar */}
-      <div className="flex-1 p-8 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         {isLoading && pages.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <Loader2 size={48} className="animate-spin text-purple-600 dark:text-purple-400" />
+          <div className="flex items-center justify-center h-96">
+            <Loader2 size={48} className="animate-spin text-blue-600 dark:text-blue-400" />
           </div>
         ) : error ? (
-          <div className="flex items-center justify-center h-full">
+          <div className="flex items-center justify-center h-96">
             <div className="text-center">
               <div className="text-red-600 dark:text-red-400 text-lg font-semibold mb-2">
                 Error loading notes
@@ -275,7 +273,7 @@ export default function CalendarPage() {
             </div>
           </div>
         ) : (
-          <div className="h-full bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-8 border border-gray-100 dark:border-gray-700" style={{ height: '700px' }}>
             <style jsx global>{`
               .rbc-calendar {
                 font-family: inherit;
@@ -283,9 +281,9 @@ export default function CalendarPage() {
               }
 
               .rbc-header {
-                padding: 8px 4px;
+                padding: 12px 8px;
                 font-weight: 600;
-                font-size: 13px;
+                font-size: 14px;
                 color: #374151;
                 border-bottom: 2px solid #e5e7eb;
                 background-color: #f9fafb;
@@ -298,50 +296,16 @@ export default function CalendarPage() {
               }
 
               .rbc-today {
-                background-color: #f3f4f6;
+                background-color: #dbeafe;
               }
 
               .dark .rbc-today {
-                background-color: #1f2937;
-              }
-
-              .rbc-off-range-bg {
-                background-color: #fafafa;
-              }
-
-              .dark .rbc-off-range-bg {
-                background-color: #111827;
-              }
-
-              .rbc-date-cell {
-                padding: 4px;
-                text-align: right;
-                font-size: 12px;
-                color: #374151;
-              }
-
-              .dark .rbc-date-cell {
-                color: #d1d5db;
-              }
-
-              .rbc-event {
-                cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
-              }
-
-              .rbc-event:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                background-color: #1e3a8a;
               }
 
               .rbc-toolbar {
                 padding: 16px 20px;
                 border-bottom: 1px solid #e5e7eb;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                flex-wrap: wrap;
-                gap: 12px;
                 margin-bottom: 20px;
               }
 
@@ -350,10 +314,10 @@ export default function CalendarPage() {
               }
 
               .rbc-toolbar button {
-                padding: 8px 16px;
+                padding: 10px 20px;
                 border: 1px solid #d1d5db;
                 background-color: white;
-                border-radius: 8px;
+                border-radius: 12px;
                 font-size: 14px;
                 font-weight: 500;
                 color: #374151;
@@ -369,26 +333,20 @@ export default function CalendarPage() {
 
               .rbc-toolbar button:hover {
                 background-color: #f3f4f6;
-                border-color: #9ca3af;
               }
 
               .dark .rbc-toolbar button:hover {
                 background-color: #4b5563;
-                border-color: #6b7280;
               }
 
               .rbc-toolbar button.rbc-active {
-                background-color: #9333ea;
+                background-color: #3b82f6;
                 color: white;
-                border-color: #9333ea;
-              }
-
-              .rbc-toolbar button.rbc-active:hover {
-                background-color: #7c3aed;
+                border-color: #3b82f6;
               }
 
               .rbc-toolbar-label {
-                font-size: 18px;
+                font-size: 20px;
                 font-weight: 700;
                 color: #111827;
               }
@@ -399,50 +357,12 @@ export default function CalendarPage() {
 
               .rbc-month-view {
                 border: 1px solid #e5e7eb;
-                border-radius: 8px;
+                border-radius: 12px;
                 overflow: hidden;
-                height: 100%;
-                display: flex;
-                flex-direction: column;
               }
 
               .dark .rbc-month-view {
                 border-color: #374151;
-                background-color: #1f2937;
-              }
-
-              .rbc-day-bg {
-                border-left: 1px solid #e5e7eb;
-              }
-
-              .dark .rbc-day-bg {
-                border-left-color: #374151;
-              }
-
-              .rbc-month-row {
-                border-top: 1px solid #e5e7eb;
-                min-height: 80px;
-                flex: 1 0 0;
-                display: flex;
-              }
-
-              .dark .rbc-month-row {
-                border-top-color: #374151;
-              }
-
-              .rbc-row-content {
-                min-height: 80px;
-                flex: 1;
-              }
-
-              .rbc-month-view .rbc-row {
-                flex: 1 0 0;
-                display: flex;
-              }
-
-              .rbc-month-view .rbc-row-bg {
-                display: flex;
-                flex: 1 0 0;
               }
             `}</style>
 
@@ -467,28 +387,26 @@ export default function CalendarPage() {
 
       {/* Notes Editor Modal */}
       {selectedDate && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-              <div className="flex items-center gap-3 flex-1">
-                <CalendarIcon size={24} className="text-purple-600 dark:text-purple-400" />
+        <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 px-8 py-6">
+              <div className="flex items-center gap-4 flex-1">
+                <CalendarIcon size={24} className="text-green-600 dark:text-green-400" />
                 <input
                   type="text"
                   value={noteTitle}
                   onChange={(e) => setNoteTitle(e.target.value)}
                   placeholder="Note title"
-                  className="flex-1 text-xl font-bold bg-transparent focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                  className="flex-1 text-2xl font-bold bg-transparent focus:outline-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
                 />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {selectedNote && (
                   <button
                     type="button"
                     onClick={handleDeleteNote}
                     disabled={isDeleting}
-                    className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Delete this note"
+                    className="flex items-center gap-2 px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-2xl transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm font-medium"
                   >
                     {isDeleting ? (
                       <>
@@ -507,7 +425,7 @@ export default function CalendarPage() {
                   type="button"
                   onClick={handleSaveNote}
                   disabled={isSaving}
-                  className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg disabled:opacity-50 transition"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-2xl disabled:opacity-50 transition shadow-lg font-medium"
                 >
                   {isSaving ? (
                     <>
@@ -524,22 +442,23 @@ export default function CalendarPage() {
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
+                  className="p-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-2xl transition"
                 >
                   <X size={20} className="text-gray-600 dark:text-gray-400" />
                 </button>
               </div>
             </div>
 
-            {/* Modal Body - Editor */}
-            <div className="flex-1 overflow-y-auto p-6">
-              <NotionEditor
-                ref={editorRef}
-                key={selectedNote?.id || selectedDate.toISOString()}
-                initialContent={noteContent}
-                onChange={setNoteContent}
-                placeholder="Write your daily note here..."
-              />
+            <div className="flex-1 overflow-y-auto p-8">
+              <div className="max-w-3xl mx-auto">
+                <NotionEditor
+                  ref={editorRef}
+                  key={selectedNote?.id || selectedDate.toISOString()}
+                  initialContent={noteContent}
+                  onChange={setNoteContent}
+                  placeholder="Write your daily note here..."
+                />
+              </div>
             </div>
           </div>
         </div>

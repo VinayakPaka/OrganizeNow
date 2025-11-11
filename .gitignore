@@ -16,6 +16,8 @@ supabase/*
 /GETTING_STARTED.md
 /NOTION_EDITOR_GUIDE.md
 /AI_SETUP.md
+/public/image.png
+/DATABASE_SETUP.md
 
 # Dependencies
 /node_modules

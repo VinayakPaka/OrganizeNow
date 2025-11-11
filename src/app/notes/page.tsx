@@ -12,7 +12,7 @@ import {
 import { NotesList } from '@/components/notes/NotesList';
 import { NotionEditor, NotionEditorHandle } from '@/components/notes/NotionEditor';
 import { NotesAIToolbar } from '@/components/notes/NotesAIToolbar';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2, Search, Bell, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 /**
@@ -23,7 +23,7 @@ export default function NotesPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { pages, isLoading, error } = useAppSelector((state) => state.pages);
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   // Filter out archived notes (calendar notes)
   const regularNotes = pages.filter((page) => !page.is_archived);
@@ -45,7 +45,7 @@ export default function NotesPage() {
     }
   }, [dispatch, isAuthenticated]);
 
-  // Handle save note (defined before handleSelectNote since it's used there)
+  // Handle save note
   const handleSaveNote = useCallback(async () => {
     if (!selectedNote) return;
 
@@ -76,7 +76,7 @@ export default function NotesPage() {
     setHasUnsavedChanges(false);
   }, [hasUnsavedChanges, selectedNote, handleSaveNote]);
 
-  // Auto-select first note if none selected (moved after handleSelectNote definition)
+  // Auto-select first note if none selected
   useEffect(() => {
     if (regularNotes.length > 0 && !selectedNote) {
       handleSelectNote(regularNotes[0]);
@@ -124,7 +124,7 @@ export default function NotesPage() {
 
     const timer = setTimeout(() => {
       handleSaveNote();
-    }, 2000); // Auto-save after 2 seconds of inactivity
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [noteTitle, noteContent, noteIcon, hasUnsavedChanges, selectedNote, handleSaveNote]);
@@ -145,12 +145,11 @@ export default function NotesPage() {
     setHasUnsavedChanges(true);
   };
 
-  // Handle AI text selection - scoped to editor only
+  // Handle AI text selection
   useEffect(() => {
     const handleSelection = () => {
       const selection = window.getSelection();
 
-      // Only capture if selection is within editor container
       if (selection && selection.rangeCount > 0 && editorContainerRef.current) {
         const range = selection.getRangeAt(0);
         if (editorContainerRef.current.contains(range.commonAncestorContainer)) {
@@ -160,7 +159,6 @@ export default function NotesPage() {
         }
       }
 
-      // Clear selection if it's outside the editor
       setSelectedText('');
     };
 
@@ -173,15 +171,13 @@ export default function NotesPage() {
     if (editorRef.current) {
       editorRef.current.insertText(newText);
       setHasUnsavedChanges(true);
-    } else {
-      console.error('[NotesPage] Editor ref not available');
     }
   };
 
   return (
-    <div className="flex h-full bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Left Sidebar - Notes List */}
-      <div className="w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-shrink-0">
+      <div className="w-80 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex-shrink-0">
         <NotesList
           notes={regularNotes}
           selectedNoteId={selectedNote?.id || null}
@@ -193,55 +189,87 @@ export default function NotesPage() {
 
       {/* Main Editor Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Header Bar */}
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+          <div className="px-8 py-4">
+            <div className="flex items-center justify-between">
+              {/* Title Section */}
+              <div className="flex items-center gap-4 flex-1">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <span className="text-white text-xl">📝</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                    {selectedNote ? noteTitle || 'Untitled' : 'Notes'}
+                  </h1>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {selectedNote
+                      ? `Last edited ${new Date(selectedNote.updated_at).toLocaleDateString()}`
+                      : `${regularNotes.length} notes total`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-4">
+                {selectedNote && (
+                  <button
+                    type="button"
+                    onClick={handleSaveNote}
+                    disabled={isSaving || !hasUnsavedChanges}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                  >
+                    {isSaving ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} />
+                        {hasUnsavedChanges ? 'Save' : 'Saved'}
+                      </>
+                    )}
+                  </button>
+                )}
+                <button className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                  <Bell size={18} className="text-gray-600 dark:text-gray-300" />
+                </button>
+                <button className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+                  <Settings size={18} className="text-gray-600 dark:text-gray-300" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {selectedNote ? (
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Editor Header */}
-            <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-8 py-4">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3 flex-1">
-                  {/* Icon Input */}
-                  <input
-                    type="text"
-                    value={noteIcon}
-                    onChange={(e) => handleIconChange(e.target.value)}
-                    placeholder="📝"
-                    className="w-12 text-2xl text-center bg-gray-50 dark:bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
-                    maxLength={2}
-                  />
+            <div className="bg-white dark:bg-gray-800 px-8 py-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center gap-4">
+                {/* Icon Input */}
+                <input
+                  type="text"
+                  value={noteIcon}
+                  onChange={(e) => handleIconChange(e.target.value)}
+                  placeholder="📝"
+                  className="w-16 h-16 text-3xl text-center bg-gray-50 dark:bg-gray-700/50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 border border-gray-200 dark:border-gray-600"
+                  maxLength={2}
+                />
 
-                  {/* Title Input */}
-                  <input
-                    type="text"
-                    value={noteTitle}
-                    onChange={(e) => handleTitleChange(e.target.value)}
-                    placeholder="Untitled"
-                    className="flex-1 text-3xl font-bold bg-transparent focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
-                  />
-                </div>
-
-                {/* Save Button */}
-                <button
-                  type="button"
-                  onClick={handleSaveNote}
-                  disabled={isSaving || !hasUnsavedChanges}
-                  className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition"
-                >
-                  {isSaving ? (
-                    <>
-                      <Loader2 size={16} className="animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save size={16} />
-                      {hasUnsavedChanges ? 'Save' : 'Saved'}
-                    </>
-                  )}
-                </button>
+                {/* Title Input */}
+                <input
+                  type="text"
+                  value={noteTitle}
+                  onChange={(e) => handleTitleChange(e.target.value)}
+                  placeholder="Untitled"
+                  className="flex-1 text-4xl font-bold bg-transparent focus:outline-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
+                />
               </div>
 
               {/* Metadata */}
-              <div className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-4">
                 Last edited{' '}
                 {new Date(selectedNote.updated_at).toLocaleString('en-US', {
                   month: 'short',
@@ -261,29 +289,33 @@ export default function NotesPage() {
 
             {/* Notion-like Block Editor */}
             <div ref={editorContainerRef} className="flex-1 overflow-y-auto bg-white dark:bg-gray-800 p-8">
-              <NotionEditor
-                ref={editorRef}
-                key={selectedNote.id}
-                initialContent={noteContent}
-                onChange={handleContentChange}
-                placeholder="Type '/' for commands..."
-              />
+              <div className="max-w-4xl mx-auto">
+                <NotionEditor
+                  ref={editorRef}
+                  key={selectedNote.id}
+                  initialContent={noteContent}
+                  onChange={handleContentChange}
+                  placeholder="Type '/' for commands..."
+                />
+              </div>
             </div>
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center text-center p-12 bg-white dark:bg-gray-800">
             <div>
-              <div className="text-6xl mb-4">📝</div>
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 flex items-center justify-center mx-auto mb-6">
+                <span className="text-6xl">📝</span>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                 Select a note or create a new one
               </h2>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
+              <p className="text-gray-500 dark:text-gray-400 mb-8">
                 Your notes will appear here for editing
               </p>
               <button
                 type="button"
                 onClick={handleCreateNote}
-                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition"
+                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-2xl transition-all shadow-lg"
               >
                 Create Your First Note
               </button>
@@ -293,13 +325,13 @@ export default function NotesPage() {
 
         {/* Loading/Error States */}
         {isLoading && regularNotes.length === 0 && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-800 bg-opacity-75 dark:bg-opacity-75">
-            <Loader2 size={32} className="animate-spin text-purple-600 dark:text-purple-400" />
+          <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+            <Loader2 size={48} className="animate-spin text-blue-600 dark:text-blue-400" />
           </div>
         )}
 
         {error && (
-          <div className="absolute top-4 right-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
+          <div className="absolute top-4 right-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-2xl shadow-lg">
             {error}
           </div>
         )}
