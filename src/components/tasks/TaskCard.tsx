@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { Task } from '@/store/slices/tasksSlice';
+import { ConfirmModal } from '@/components/ui/Modal';
 import { CheckCircle2, Circle, Clock, Trash2, Calendar, Flag } from 'lucide-react';
 
 interface TaskCardProps {
@@ -15,6 +17,7 @@ interface TaskCardProps {
  * Displays a single task card with actions
  */
 export function TaskCard({ task, onToggleComplete, onDelete, onClick }: TaskCardProps) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
   // Format date and time
   const formatDueDate = () => {
     if (!task.due_date) return null;
@@ -185,15 +188,27 @@ export function TaskCard({ task, onToggleComplete, onDelete, onClick }: TaskCard
           type="button"
           onClick={(e) => {
             e.stopPropagation();
-            if (confirm('Are you sure you want to delete this task?')) {
-              onDelete(task.id);
-            }
+            setConfirmDelete(true);
           }}
           className="flex-shrink-0 p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-100 text-red-600 transition-opacity"
         >
           <Trash2 size={16} />
         </button>
       </div>
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmDelete}
+        onClose={() => setConfirmDelete(false)}
+        onConfirm={() => {
+          onDelete(task.id);
+          setConfirmDelete(false);
+        }}
+        title="Delete Task"
+        message="Are you sure you want to delete this task? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }

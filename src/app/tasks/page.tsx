@@ -107,9 +107,9 @@ export default function TasksPage() {
       {/* Task Notifications System */}
       <TaskNotifications tasks={tasks} />
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black">
         {/* Top Header Bar */}
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+        <div className="bg-white/80 dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-8 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -149,7 +149,7 @@ export default function TasksPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Left Sidebar - Filters */}
             <div className="lg:col-span-1">
-              <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Filters</h2>
 
                 <div className="space-y-2">

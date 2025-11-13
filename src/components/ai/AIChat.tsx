@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { X, Send, Loader2, Sparkles, CheckCircle, FileText, Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;

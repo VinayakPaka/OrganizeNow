@@ -15,6 +15,7 @@ import {
 } from '@/store/slices/passwordsSlice';
 import { PasswordCard } from '@/components/vault/PasswordCard';
 import { PasswordForm } from '@/components/vault/PasswordForm';
+import { ConfirmModal } from '@/components/ui/Modal';
 import { Lock, Plus, Search, Loader2, Bell, Settings } from 'lucide-react';
 
 /**
@@ -29,6 +30,7 @@ export default function VaultPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingPassword, setEditingPassword] = useState<Password | null>(null);
   const [decryptedPasswords, setDecryptedPasswords] = useState<Record<string, string>>({});
+  const [confirmDelete, setConfirmDelete] = useState<{ show: boolean; passwordId: string | null }>({ show: false, passwordId: null });
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
@@ -111,15 +113,20 @@ export default function VaultPage() {
 
   // Handle delete password
   const handleDeletePassword = async (id: string) => {
-    if (confirm('Are you sure you want to delete this password? This action cannot be undone.')) {
-      await dispatch(deletePassword(id));
-      // Clear decrypted password
-      setDecryptedPasswords((prev) => {
-        const newState = { ...prev };
-        delete newState[id];
-        return newState;
-      });
-    }
+    setConfirmDelete({ show: true, passwordId: id });
+  };
+
+  const confirmDeletePassword = async () => {
+    if (!confirmDelete.passwordId) return;
+
+    await dispatch(deletePassword(confirmDelete.passwordId));
+    // Clear decrypted password
+    setDecryptedPasswords((prev) => {
+      const newState = { ...prev };
+      delete newState[confirmDelete.passwordId!];
+      return newState;
+    });
+    setConfirmDelete({ show: false, passwordId: null });
   };
 
   // Handle close form
@@ -129,9 +136,9 @@ export default function VaultPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black">
       {/* Top Header Bar */}
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+      <div className="bg-white/80 dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -268,6 +275,17 @@ export default function VaultPage() {
           isLoading={isLoading}
         />
       )}
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmDelete.show}
+        onClose={() => setConfirmDelete({ show: false, passwordId: null })}
+        onConfirm={confirmDeletePassword}
+        title="Delete Password"
+        message="Are you sure you want to delete this password? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }

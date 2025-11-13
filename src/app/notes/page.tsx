@@ -13,6 +13,7 @@ import { NotesList } from '@/components/notes/NotesList';
 import { NotionEditor, NotionEditorHandle } from '@/components/notes/NotionEditor';
 import { NotesAIToolbar } from '@/components/notes/NotesAIToolbar';
 import { Save, Loader2, Search, Bell, Settings } from 'lucide-react';
+import { AlertModal, ConfirmModal } from '@/components/ui/Modal';
 import { useRouter } from 'next/navigation';
 
 /**
@@ -37,6 +38,8 @@ export default function NotesPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [selectedText, setSelectedText] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState<{ show: boolean; pageId: string | null }>({ show: false, pageId: null });
+  const [errorAlert, setErrorAlert] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
 
   // Fetch pages on mount
   useEffect(() => {
@@ -105,16 +108,30 @@ export default function NotesPage() {
 
   // Handle delete note
   const handleDeleteNote = async (id: string) => {
-    if (confirm('Are you sure you want to delete this note?')) {
-      await dispatch(deletePage(id));
+    setConfirmDelete({ show: true, pageId: id });
+  };
 
-      // Clear selection if deleted note was selected
-      if (selectedNote?.id === id) {
-        setSelectedNote(null);
-        setNoteTitle('');
-        setNoteContent('');
-        setNoteIcon('');
+  const confirmDeleteNote = async () => {
+    if (!confirmDelete.pageId) return;
+
+    try {
+      const result = await dispatch(deletePage(confirmDelete.pageId));
+
+      if (deletePage.fulfilled.match(result)) {
+        // Clear selection if deleted note was selected
+        if (selectedNote?.id === confirmDelete.pageId) {
+          setSelectedNote(null);
+          setNoteTitle('');
+          setNoteContent('');
+          setNoteIcon('');
+        }
+      } else {
+        setErrorAlert({ show: true, message: 'Failed to delete note. Please try again.' });
       }
+    } catch (error) {
+      setErrorAlert({ show: true, message: 'An error occurred while deleting. Please try again.' });
+    } finally {
+      setConfirmDelete({ show: false, pageId: null });
     }
   };
 
@@ -175,9 +192,9 @@ export default function NotesPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black">
       {/* Left Sidebar - Notes List */}
-      <div className="w-80 bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 flex-shrink-0">
+      <div className="w-80 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-700 flex-shrink-0">
         <NotesList
           notes={regularNotes}
           selectedNoteId={selectedNote?.id || null}
@@ -190,7 +207,7 @@ export default function NotesPage() {
       {/* Main Editor Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header Bar */}
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+        <div className="bg-white/80 dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
           <div className="px-8 py-4">
             <div className="flex items-center justify-between">
               {/* Title Section */}
@@ -246,7 +263,7 @@ export default function NotesPage() {
         {selectedNote ? (
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Editor Header */}
-            <div className="bg-white dark:bg-gray-800 px-8 py-6 border-b border-gray-100 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-900 px-8 py-6 border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center gap-4">
                 {/* Icon Input */}
                 <input
@@ -288,7 +305,7 @@ export default function NotesPage() {
             />
 
             {/* Notion-like Block Editor */}
-            <div ref={editorContainerRef} className="flex-1 overflow-y-auto bg-white dark:bg-gray-800 p-8">
+            <div ref={editorContainerRef} className="flex-1 overflow-y-auto bg-white dark:bg-gray-900 p-8">
               <div className="max-w-4xl mx-auto">
                 <NotionEditor
                   ref={editorRef}
@@ -301,7 +318,7 @@ export default function NotesPage() {
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-center p-12 bg-white dark:bg-gray-800">
+          <div className="flex-1 flex items-center justify-center text-center p-12 bg-white dark:bg-gray-900">
             <div>
               <div className="w-32 h-32 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 flex items-center justify-center mx-auto mb-6">
                 <span className="text-6xl">📝</span>
@@ -325,7 +342,7 @@ export default function NotesPage() {
 
         {/* Loading/Error States */}
         {isLoading && regularNotes.length === 0 && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+          <div className="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-black/95 backdrop-blur-sm">
             <Loader2 size={48} className="animate-spin text-blue-600 dark:text-blue-400" />
           </div>
         )}
@@ -336,6 +353,27 @@ export default function NotesPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmDelete.show}
+        onClose={() => setConfirmDelete({ show: false, pageId: null })}
+        onConfirm={confirmDeleteNote}
+        title="Delete Note"
+        message="Are you sure you want to delete this note? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
+
+      {/* Error Alert Modal */}
+      <AlertModal
+        isOpen={errorAlert.show}
+        onClose={() => setErrorAlert({ show: false, message: '' })}
+        title="Error"
+        message={errorAlert.message}
+        type="error"
+      />
     </div>
   );
 }

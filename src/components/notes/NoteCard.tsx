@@ -74,7 +74,7 @@ export function NoteCard({ note, onClick, onDelete, isActive }: NoteCardProps) {
       className={`group relative p-4 rounded-2xl border cursor-pointer transition-all ${
         isActive
           ? 'border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 shadow-sm'
-          : 'border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-md'
+          : 'border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-blue-200 dark:hover:border-blue-700 hover:shadow-md'
       }`}
       onClick={onClick}
     >
@@ -118,7 +118,7 @@ export function NoteCard({ note, onClick, onDelete, isActive }: NoteCardProps) {
                 className="fixed inset-0 z-10"
                 onClick={() => setShowMenu(false)}
               ></div>
-              <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 z-20 overflow-hidden">
+              <div className="absolute right-0 mt-1 w-40 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 z-20 overflow-hidden">
                 <button
                   type="button"
                   className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"

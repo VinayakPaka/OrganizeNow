@@ -14,13 +14,18 @@ export function Sidebar() {
   const { user } = useAppSelector((state) => state.auth);
   const { theme, toggleTheme } = useTheme();
 
+  // Hide sidebar on auth pages
+  if (pathname?.startsWith('/auth/')) {
+    return null;
+  }
+
   const handleLogout = async () => {
     await dispatch(logout());
     router.push("/auth/login");
   };
 
   return (
-    <aside className="h-screen bg-white dark:bg-gray-800 flex flex-col sticky top-0 w-64 border-r border-gray-100 dark:border-gray-700">
+    <aside className="h-screen bg-white dark:bg-black flex flex-col sticky top-0 w-64 border-r border-gray-100 dark:border-gray-700">
       {/* Logo */}
       <div className="p-6">
         <Link href="/dashboard" className="flex items-center gap-3">

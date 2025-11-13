@@ -92,7 +92,11 @@ export async function intelligentSearch(request: AISearchRequest): Promise<{
   if (request.context.tasks && request.context.tasks.length > 0) {
     contextParts.push('TASKS:');
     request.context.tasks.forEach((task, idx) => {
-      contextParts.push(`${idx + 1}. ${task.title} (Priority: ${task.priority}, Due: ${task.due_date || 'No date'}, Status: ${task.completed ? 'Completed' : 'Pending'})`);
+      const dueInfo = task.due_date
+        ? `Due: ${task.due_date}${task.due_time ? ` at ${task.due_time}` : ''}`
+        : 'No due date';
+      const status = task.completed ? 'Completed' : 'Not completed';
+      contextParts.push(`${idx + 1}. "${task.title}" (Priority: ${task.priority ?? 'None'}, ${dueInfo}, Status: ${status}${task.category ? `, Category: ${task.category}` : ''})`);
       if (task.description) {
         contextParts.push(`   Description: ${task.description}`);
       }
@@ -102,7 +106,7 @@ export async function intelligentSearch(request: AISearchRequest): Promise<{
   if (request.context.notes && request.context.notes.length > 0) {
     contextParts.push('\nNOTES:');
     request.context.notes.forEach((note, idx) => {
-      contextParts.push(`${idx + 1}. ${note.title}`);
+      contextParts.push(`${idx + 1}. "${note.title}"`);
       if (note.content) {
         const plainText = typeof note.content === 'string'
           ? note.content
@@ -115,7 +119,7 @@ export async function intelligentSearch(request: AISearchRequest): Promise<{
   if (request.context.boards && request.context.boards.length > 0) {
     contextParts.push('\nWHITEBOARDS/BOARDS:');
     request.context.boards.forEach((board, idx) => {
-      contextParts.push(`${idx + 1}. ${board.title}`);
+      contextParts.push(`${idx + 1}. "${board.title}"`);
       if (board.description) {
         contextParts.push(`   Description: ${board.description}`);
       }
@@ -125,7 +129,7 @@ export async function intelligentSearch(request: AISearchRequest): Promise<{
   if (request.context.passwords && request.context.passwords.length > 0) {
     contextParts.push('\nPASSWORD VAULT ITEMS:');
     request.context.passwords.forEach((pwd, idx) => {
-      contextParts.push(`${idx + 1}. ${pwd.service_name || pwd.username} (URL: ${pwd.url || 'N/A'})`);
+      contextParts.push(`${idx + 1}. "${pwd.service_name || pwd.username}" (URL: ${pwd.url || 'N/A'})`);
       if (pwd.notes) {
         contextParts.push(`   Notes: ${pwd.notes.slice(0, 100)}...`);
       }
@@ -134,31 +138,38 @@ export async function intelligentSearch(request: AISearchRequest): Promise<{
 
   const contextText = contextParts.join('\n');
 
-  const prompt = `You are an intelligent assistant helping a user search through their personal data.
+  const prompt = `You are an intelligent assistant helping a user search through their personal productivity data.
 
-USER DATA:
+AVAILABLE USER DATA:
 ${contextText}
 
 USER QUESTION: ${request.query}
 
-Please:
-1. Answer the user's question based on the data provided above
-2. Be specific and reference actual data from the lists above (tasks, notes, boards, passwords)
-3. List the most relevant items that match the query
-4. Format your response as JSON with this structure:
+CRITICAL INSTRUCTIONS:
+1. ONLY use data from the "AVAILABLE USER DATA" section above. DO NOT make up or hallucinate any information.
+2. If the user asks about tasks, notes, boards, or passwords that are NOT in the data above, say you couldn't find any matching items.
+3. When mentioning specific items, quote their exact titles and details from the data above.
+4. For date-related queries (e.g., "today", "this week"), compare against the actual due_date values in the task data.
+5. Today's date is: ${new Date().toISOString().split('T')[0]}
+
+RESPONSE FORMAT:
+Return ONLY valid JSON (no markdown, no code blocks, no explanations):
 {
-  "answer": "Your helpful answer here, referencing specific data from the context",
+  "answer": "Your answer based ONLY on the actual data above. Be specific with item titles and details.",
   "relevantItems": [
     {
       "type": "task" | "note" | "board" | "password",
-      "index": number (1-based index from the data above),
-      "relevance": number (0-100 score)
+      "index": number (1-based index from the lists above),
+      "relevance": number (0-100 relevance score)
     }
   ]
 }
 
-Return ONLY valid JSON, no markdown or explanations.
-IMPORTANT: Use the actual data provided above in your answer. Don't make up information.`;
+If no relevant data exists, respond with:
+{
+  "answer": "I couldn't find any [tasks/notes/boards/passwords] matching your query in your data.",
+  "relevantItems": []
+}`;
 
   try {
     const result = await model.generateContent(prompt);

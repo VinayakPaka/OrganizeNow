@@ -7,6 +7,7 @@ import { fetchTasks } from '@/store/slices/tasksSlice';
 import { fetchPages } from '@/store/slices/pagesSlice';
 import { fetchBoards } from '@/store/slices/boardsSlice';
 import { fetchPasswords } from '@/store/slices/passwordsSlice';
+import { AlertModal } from '@/components/ui/Modal';
 import {
   FileText,
   Grid3x3,
@@ -33,6 +34,7 @@ export default function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [showSettingsAlert, setShowSettingsAlert] = useState(false);
 
   // Fetch all data on mount
   useEffect(() => {
@@ -183,9 +185,9 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black">
       {/* Top Header Bar */}
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+      <div className="bg-white/80 dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
             {/* Welcome Message */}
@@ -216,7 +218,7 @@ export default function DashboardPage() {
                 />
                 {/* Search Results Dropdown */}
                 {showSearchResults && searchResults.length > 0 && (
-                  <div className="absolute top-full mt-2 w-96 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
+                  <div className="absolute top-full mt-2 w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
                     <div className="p-2">
                       {searchResults.map((result, index) => (
                         <button
@@ -247,7 +249,7 @@ export default function DashboardPage() {
                   </div>
                 )}
                 {showSearchResults && searchResults.length === 0 && searchQuery && (
-                  <div className="absolute top-full mt-2 w-96 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 z-50 p-4">
+                  <div className="absolute top-full mt-2 w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 z-50 p-4">
                     <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
                       No results found for "{searchQuery}"
                     </p>
@@ -261,7 +263,7 @@ export default function DashboardPage() {
                 <Bell size={18} className="text-gray-600 dark:text-gray-300" />
               </button>
               <button
-                onClick={() => alert('Settings feature coming soon!')}
+                onClick={() => setShowSettingsAlert(true)}
                 className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition"
               >
                 <Settings size={18} className="text-gray-600 dark:text-gray-300" />
@@ -271,12 +273,21 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Settings Alert Modal */}
+      <AlertModal
+        isOpen={showSettingsAlert}
+        onClose={() => setShowSettingsAlert(false)}
+        title="Settings Coming Soon"
+        message="The settings feature is currently under development. Stay tuned for updates!"
+        type="info"
+      />
+
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Stats Cards Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Profile Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profile</h3>
               <button className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -288,7 +299,7 @@ export default function DashboardPage() {
             <div className="flex flex-col items-center">
               <div className="relative mb-4">
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 p-1">
-                  <div className="w-full h-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center">
+                  <div className="w-full h-full rounded-full bg-white dark:bg-gray-900 flex items-center justify-center">
                     <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-blue-500 to-purple-600">
                       {user?.name?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
                     </span>
@@ -384,7 +395,7 @@ export default function DashboardPage() {
               <button
                 key={index}
                 onClick={() => router.push(feature.route)}
-                className="group bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 text-left relative overflow-hidden"
+                className="group bg-white dark:bg-gray-900 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 text-left relative overflow-hidden"
               >
                 {/* Icon with gradient background */}
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>

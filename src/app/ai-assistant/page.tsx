@@ -208,9 +208,9 @@ export default function AIAssistantPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black">
       {/* Top Header Bar */}
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+      <div className="bg-white/80 dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -240,7 +240,7 @@ export default function AIAssistantPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Left Sidebar - Conversation History */}
           <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col h-[calc(100vh-200px)]">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col h-[calc(100vh-200px)]">
               <div className="p-6 border-b border-gray-100 dark:border-gray-700">
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Conversations</h2>
                 <button
@@ -284,7 +284,7 @@ export default function AIAssistantPage() {
                           e.stopPropagation();
                           handleDeleteConversation(conversation.id);
                         }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-500 transition shadow-sm"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 dark:hover:border-red-500 transition shadow-sm"
                         aria-label="Delete conversation"
                         title="Delete conversation"
                       >
@@ -299,7 +299,7 @@ export default function AIAssistantPage() {
 
           {/* Main Chat Area */}
           <div className="lg:col-span-3">
-            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col h-[calc(100vh-200px)]">
+            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-lg border border-gray-100 dark:border-gray-700 flex flex-col h-[calc(100vh-200px)]">
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-8 space-y-6">
                 {activeConversation?.messages.map((message, index) => (
@@ -325,7 +325,7 @@ export default function AIAssistantPage() {
                               key={idx}
                               type="button"
                               onClick={() => handleItemClick(item)}
-                              className="w-full flex items-center gap-3 p-3 bg-white dark:bg-gray-800 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transition border border-gray-200 dark:border-gray-600 text-left shadow-sm"
+                              className="w-full flex items-center gap-3 p-3 bg-white dark:bg-gray-900 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 transition border border-gray-200 dark:border-gray-600 text-left shadow-sm"
                             >
                               {getItemIcon(item.type)}
                               <div className="flex-1">

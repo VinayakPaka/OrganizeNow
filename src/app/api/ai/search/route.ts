@@ -38,22 +38,27 @@ export async function POST(request: NextRequest) {
         .from('tasks')
         .select('id, title, description, priority, due_date, due_time, completed, category')
         .eq('user_id', user.userId)
-        .limit(50),
+        .order('created_at', { ascending: false })
+        .limit(100),
       supabaseAdmin
         .from('pages')
-        .select('id, title, content, icon')
+        .select('id, title, content, icon, is_archived')
         .eq('user_id', user.userId)
-        .limit(50),
+        .eq('is_archived', false)
+        .order('updated_at', { ascending: false })
+        .limit(100),
       supabaseAdmin
         .from('boards')
         .select('id, title, description')
         .eq('user_id', user.userId)
-        .limit(50),
+        .order('updated_at', { ascending: false })
+        .limit(100),
       supabaseAdmin
         .from('passwords')
         .select('id, service_name, username, url, notes')
         .eq('user_id', user.userId)
-        .limit(50),
+        .order('created_at', { ascending: false })
+        .limit(100),
     ]);
 
     const context: AISearchRequest['context'] = {

@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchBoards, createBoard, deleteBoard } from "@/store/slices/boardsSlice";
+import { AlertModal, ConfirmModal } from "@/components/ui/Modal";
 import { Plus, Trash2, Loader2, Bell, Settings, Search } from "lucide-react";
 
 export default function WhiteboardsPage() {
@@ -15,6 +16,8 @@ export default function WhiteboardsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [errorAlert, setErrorAlert] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
+  const [confirmDelete, setConfirmDelete] = useState<{ show: boolean; boardId: string | null }>({ show: false, boardId: null });
 
   // Fetch boards on mount
   useEffect(() => {
@@ -54,33 +57,38 @@ export default function WhiteboardsPage() {
       } else if (createBoard.rejected.match(result)) {
         const errorMessage = result.payload as string || 'Failed to create board';
         console.error('Failed to create board:', errorMessage);
-        alert(`Failed to create board: ${errorMessage}`);
+        setErrorAlert({ show: true, message: `Failed to create board: ${errorMessage}` });
       }
     } catch (error) {
       console.error('Error creating board:', error);
-      alert('An error occurred while creating the board.');
+      setErrorAlert({ show: true, message: 'An error occurred while creating the board.' });
     }
   }
 
   async function handleDelete(id: string, e: React.MouseEvent) {
     e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this board and all its content?")) return;
+    setConfirmDelete({ show: true, boardId: id });
+  }
+
+  async function confirmDeleteBoard() {
+    if (!confirmDelete.boardId) return;
 
     try {
-      setDeletingId(id);
-      const result = await dispatch(deleteBoard(id));
+      setDeletingId(confirmDelete.boardId);
+      const result = await dispatch(deleteBoard(confirmDelete.boardId));
 
       if (deleteBoard.fulfilled.match(result)) {
         console.log('[Whiteboards] Board deleted successfully');
       } else {
         console.error('[Whiteboards] Board deletion failed:', result);
-        alert('Failed to delete board. Please try again.');
+        setErrorAlert({ show: true, message: 'Failed to delete board. Please try again.' });
       }
     } catch (error) {
       console.error('[Whiteboards] Error deleting board:', error);
-      alert('An error occurred while deleting the board.');
+      setErrorAlert({ show: true, message: 'An error occurred while deleting the board.' });
     } finally {
       setDeletingId(null);
+      setConfirmDelete({ show: false, boardId: null });
     }
   }
 
@@ -89,9 +97,9 @@ export default function WhiteboardsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black">
       {/* Top Header Bar */}
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+      <div className="bg-white/80 dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
             {/* Welcome Message */}
@@ -146,7 +154,7 @@ export default function WhiteboardsPage() {
         {/* Create Board Modal */}
         {showCreate && (
           <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50" onClick={() => setShowCreate(false)}>
-            <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 w-full max-w-md shadow-2xl border border-gray-100 dark:border-gray-700" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 w-full max-w-md shadow-2xl border border-gray-100 dark:border-gray-700" onClick={(e) => e.stopPropagation()}>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Create New Board</h2>
               <form onSubmit={handleCreate} className="space-y-4">
                 <input
@@ -234,6 +242,27 @@ export default function WhiteboardsPage() {
           </div>
         )}
       </div>
+
+      {/* Error Alert Modal */}
+      <AlertModal
+        isOpen={errorAlert.show}
+        onClose={() => setErrorAlert({ show: false, message: '' })}
+        title="Error"
+        message={errorAlert.message}
+        type="error"
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmDelete.show}
+        onClose={() => setConfirmDelete({ show: false, boardId: null })}
+        onConfirm={confirmDeleteBoard}
+        title="Delete Board"
+        message="Are you sure you want to delete this board and all its content? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }

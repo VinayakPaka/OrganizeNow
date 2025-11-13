@@ -44,15 +44,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
-      <body className={`${jakarta.className} bg-white dark:bg-gray-900`}>
+      <body className={`${jakarta.className} bg-white dark:bg-black`}>
         <ThemeProvider>
           <ReduxProvider>
             <SupabaseProvider>
               <AuthProvider>
-                <div className="flex h-screen bg-white dark:bg-gray-900">
+                <div className="flex h-screen bg-white dark:bg-black">
                   <Sidebar />
                   <div className="flex-1 flex flex-col overflow-hidden">
-                    <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">{children}</main>
+                    <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100">{children}</main>
                   </div>
                 </div>
               </AuthProvider>

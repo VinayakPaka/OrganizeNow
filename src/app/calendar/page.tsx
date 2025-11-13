@@ -12,6 +12,7 @@ import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { NotionEditor, NotionEditorHandle } from '@/components/notes/NotionEditor';
+import { AlertModal, ConfirmModal } from '@/components/ui/Modal';
 import { Loader2, Calendar as CalendarIcon, X, Save, Trash2, Bell, Settings, Search } from 'lucide-react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -49,6 +50,8 @@ export default function CalendarPage() {
   const [noteContent, setNoteContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errorAlert, setErrorAlert] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
+  const [confirmDelete, setConfirmDelete] = useState<{ show: boolean; noteId: string | null }>({ show: false, noteId: null });
 
   // Fetch pages on mount
   useEffect(() => {
@@ -153,7 +156,7 @@ export default function CalendarPage() {
         if (updatePage.fulfilled.match(result)) {
           console.log('[Calendar] Note updated successfully');
         } else {
-          alert('Failed to save note. Please try again.');
+          setErrorAlert({ show: true, message: 'Failed to save note. Please try again.' });
         }
       } else {
         const result = await dispatch(
@@ -168,11 +171,11 @@ export default function CalendarPage() {
         if (createPage.fulfilled.match(result)) {
           setSelectedNote(result.payload);
         } else {
-          alert('Failed to save note. Please try again.');
+          setErrorAlert({ show: true, message: 'Failed to save note. Please try again.' });
         }
       }
     } catch (error) {
-      alert('An error occurred while saving. Please try again.');
+      setErrorAlert({ show: true, message: 'An error occurred while saving. Please try again.' });
     } finally {
       setIsSaving(false);
     }
@@ -180,22 +183,26 @@ export default function CalendarPage() {
 
   const handleDeleteNote = async () => {
     if (!selectedNote || isDeleting) return;
+    setConfirmDelete({ show: true, noteId: selectedNote.id });
+  };
 
-    if (confirm('Are you sure you want to delete this daily note?')) {
-      setIsDeleting(true);
-      try {
-        const result = await dispatch(deletePage(selectedNote.id));
+  const confirmDeleteNote = async () => {
+    if (!confirmDelete.noteId || isDeleting) return;
 
-        if (deletePage.fulfilled.match(result)) {
-          handleClose();
-        } else {
-          alert('Failed to delete note. Please try again.');
-        }
-      } catch (error) {
-        alert('An error occurred while deleting. Please try again.');
-      } finally {
-        setIsDeleting(false);
+    setIsDeleting(true);
+    try {
+      const result = await dispatch(deletePage(confirmDelete.noteId));
+
+      if (deletePage.fulfilled.match(result)) {
+        handleClose();
+      } else {
+        setErrorAlert({ show: true, message: 'Failed to delete note. Please try again.' });
       }
+    } catch (error) {
+      setErrorAlert({ show: true, message: 'An error occurred while deleting. Please try again.' });
+    } finally {
+      setIsDeleting(false);
+      setConfirmDelete({ show: false, noteId: null });
     }
   };
 
@@ -222,9 +229,9 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 dark:from-black dark:via-gray-900 dark:to-black">
       {/* Top Header Bar */}
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+      <div className="bg-white/80 dark:bg-black/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -273,7 +280,7 @@ export default function CalendarPage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-8 border border-gray-100 dark:border-gray-700" style={{ height: '700px' }}>
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-lg p-8 border border-gray-100 dark:border-gray-700" style={{ height: '700px' }}>
             <style jsx global>{`
               .rbc-calendar {
                 font-family: inherit;
@@ -388,7 +395,7 @@ export default function CalendarPage() {
       {/* Notes Editor Modal */}
       {selectedDate && (
         <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col border border-gray-100 dark:border-gray-700">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col border border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-gray-700 px-8 py-6">
               <div className="flex items-center gap-4 flex-1">
                 <CalendarIcon size={24} className="text-green-600 dark:text-green-400" />
@@ -463,6 +470,26 @@ export default function CalendarPage() {
           </div>
         </div>
       )}
+      {/* Error Alert Modal */}
+      <AlertModal
+        isOpen={errorAlert.show}
+        onClose={() => setErrorAlert({ show: false, message: '' })}
+        title="Error"
+        message={errorAlert.message}
+        type="error"
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmDelete.show}
+        onClose={() => setConfirmDelete({ show: false, noteId: null })}
+        onConfirm={confirmDeleteNote}
+        title="Delete Daily Note"
+        message="Are you sure you want to delete this daily note? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+      />
     </div>
   );
 }
