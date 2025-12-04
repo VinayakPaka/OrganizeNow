@@ -57,53 +57,102 @@ export default function SignupPage() {
   const showPasswordMismatch = confirmPassword.length > 0 && !passwordMatch;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Top right gradient blob */}
-        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-gradient-to-br from-purple-400/30 to-purple-600/20 rounded-full blur-3xl"></div>
-        {/* Bottom left gradient blob */}
-        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-gradient-to-tr from-yellow-400/20 to-purple-400/10 rounded-full blur-3xl"></div>
-        {/* Small accent blob */}
-        <div className="absolute top-1/3 right-1/4 w-[200px] h-[200px] bg-purple-300/20 rounded-full blur-2xl"></div>
+    <div className="min-h-screen h-screen flex flex-col bg-white relative overflow-hidden">
+      {/* relative px-6 lg:px-8 pt-16 pb-24 bg-gradient-to-br from-purple-50 via-purple-100/50 to-white overflow-hidden */}
+
+      {/* Centered Logo & Title at Top */}
+      <div className="relative z-10 pt-8 pb-6 text-center">
+        <Link href="/" className="inline-flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-lg">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/>
+            </svg>
+          </div>
+          <span className="text-3xl font-bold">
+            <span className="text-black">Organize</span>
+            <span className="text-yellow-500 italic" style={{ fontFamily: 'cursive' }}>Now</span>
+          </span>
+        </Link>
+        <p className="text-gray-600 mt-2 text-sm">Your all-in-one productivity workspace</p>
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        {/* Logo Section */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity">
-            {/* Purple circle with white star/sparkle logo */}
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                {/* Thin sparkle icon */}
-                <path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/>
-              </svg>
+      {/* Main Content Area */}
+      <div className="flex-1 relative z-10 flex items-center justify-center px-4 lg:px-8">
+        <div className="w-full max-w-7xl mx-auto lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+          
+          {/* Left Side - Illustration & Decorative Elements */}
+          <div className="hidden lg:flex items-center justify-center relative">
+            
+            {/* Decorative icons floating around */}
+            <div className="absolute top-1/4 left-12 transform -translate-y-1/2">
+              <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-purple-100 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3s' }}>
+                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </div>
             </div>
-            <span className="text-2xl font-bold">
-              <span className="text-black">Organize</span>
-              <span className="text-yellow-500 italic" style={{ fontFamily: 'cursive' }}>Now</span>
-            </span>
-          </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Get{' '}
-            <span className="text-purple-600 italic" style={{ fontFamily: 'cursive' }}>
-              started
-            </span>
-          </h1>
-          <p className="text-lg text-gray-600">Start organizing your life today</p>
-        </div>
+            
+            <div className="absolute bottom-1/4 right-12">
+              <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-yellow-100 animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '3s' }}>
+                <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+            </div>
 
-        {/* Form Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 border-2 border-purple-100 hover:border-purple-200 transition-all duration-300">
-          <form className="space-y-5" onSubmit={onSubmit}>
+            <div className="absolute top-1/2 right-0">
+              <div className="bg-white/80 backdrop-blur-sm p-3 rounded-2xl shadow-lg border border-purple-100 animate-bounce" style={{ animationDelay: '2s', animationDuration: '3s' }}>
+                <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Main illustration */}
+            <div className="max-w-lg relative">
+              <img 
+                src="/DrawKit Vector Illustration Team Work/SVG/DrawKit Vector Illustration Team Work (11).svg" 
+                alt="Signup Illustration" 
+                className="w-full h-auto mb-8"
+              />
+              <div className="text-center relative z-10">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Start your{' '}
+                  <span className="text-purple-600 italic" style={{ fontFamily: 'cursive' }}>
+                    organized
+                  </span>
+                  {' '}journey
+                </h2>
+                {/* <p className="text-lg text-gray-600 leading-relaxed">
+                  Join thousands of professionals who trust OrganizeNow to manage their tasks, secure their passwords, and boost their productivity every day.
+                </p> */}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Form */}
+          <div className="w-full flex items-center justify-center">
+            <div className="w-full max-w-md">
+              {/* Form Card */}
+              <div className="bg-white rounded-3xl shadow-2xl p-8 border-2 border-purple-100 hover:border-purple-200 transition-all duration-300">
+          <div className="text-center mb-4">
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              Get{' '}
+              <span className="text-purple-600 italic" style={{ fontFamily: 'cursive' }}>
+                started
+              </span>
+            </h1>
+            <p className="text-sm text-gray-600">Start organizing your life today</p>
+          </div>
+          <form className="space-y-3" onSubmit={onSubmit}>
             <div>
-              <label htmlFor="name" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="name" className="block text-xs font-semibold text-gray-900 mb-1">
                 Full Name <span className="text-gray-400 font-normal">(Optional)</span>
               </label>
               <input
                 id="name"
                 type="text"
-                className="w-full rounded-xl border-2 border-gray-200 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
+                className="w-full rounded-lg border-2 border-gray-200 bg-white text-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
                 placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -112,13 +161,13 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="email" className="block text-xs font-semibold text-gray-900 mb-1">
                 Email Address
               </label>
               <input
                 id="email"
                 type="email"
-                className="w-full rounded-xl border-2 border-gray-200 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
+                className="w-full rounded-lg border-2 border-gray-200 bg-white text-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -128,13 +177,13 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="password" className="block text-xs font-semibold text-gray-900 mb-1">
                 Password
               </label>
               <input
                 id="password"
                 type="password"
-                className="w-full rounded-xl border-2 border-gray-200 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
+                className="w-full rounded-lg border-2 border-gray-200 bg-white text-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
                 placeholder="Min. 8 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -142,17 +191,16 @@ export default function SignupPage() {
                 minLength={8}
                 disabled={isLoading}
               />
-              <p className="text-xs text-gray-500 mt-1.5">Must be at least 8 characters long</p>
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="confirmPassword" className="block text-xs font-semibold text-gray-900 mb-1">
                 Confirm Password
               </label>
               <input
                 id="confirmPassword"
                 type="password"
-                className={`w-full rounded-xl border-2 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 transition placeholder:text-gray-400 ${
+                className={`w-full rounded-lg border-2 bg-white text-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 transition placeholder:text-gray-400 ${
                   showPasswordMismatch
                     ? "border-red-300 focus:ring-red-500 focus:border-red-500"
                     : "border-gray-200 focus:ring-purple-500 focus:border-purple-500 hover:border-gray-300"
@@ -164,7 +212,7 @@ export default function SignupPage() {
                 disabled={isLoading}
               />
               {showPasswordMismatch && (
-                <p className="text-xs text-red-600 mt-1.5 font-medium">⚠ Passwords do not match</p>
+                <p className="text-xs text-red-600 mt-0.5 font-medium">⚠ Passwords do not match</p>
               )}
             </div>
 
@@ -177,7 +225,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={isLoading || showPasswordMismatch}
-              className="w-full rounded-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-4 text-base disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 shadow-xl shadow-purple-500/30 hover:shadow-2xl hover:scale-[1.02]"
+              className="w-full rounded-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-3 text-sm disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:scale-[1.02]"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -190,8 +238,8 @@ export default function SignupPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+          <div className="mt-4 text-center">
+            <p className="text-xs text-gray-600">
               Already have an account?{" "}
               <Link
                 href="/auth/login"
@@ -201,14 +249,17 @@ export default function SignupPage() {
               </Link>
             </p>
           </div>
-        </div>
 
-        <p className="text-center text-xs text-gray-500 mt-6">
-          By signing up, you agree to our{" "}
-          <Link href="#" className="text-purple-600 hover:underline">Terms of Service</Link>
-          {" "}and{" "}
-          <Link href="#" className="text-purple-600 hover:underline">Privacy Policy</Link>
-        </p>
+          <p className="text-center text-xs text-gray-500 mt-4">
+            By signing up, you agree to our{" "}
+            <Link href="#" className="text-purple-600 hover:underline">Terms</Link>
+            {" "}and{" "}
+            <Link href="#" className="text-purple-600 hover:underline">Privacy Policy</Link>
+          </p>
+        </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Custom Styles */}

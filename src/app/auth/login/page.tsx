@@ -44,53 +44,92 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Top right gradient blob */}
-        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-gradient-to-br from-purple-400/30 to-purple-600/20 rounded-full blur-3xl"></div>
-        {/* Bottom left gradient blob */}
-        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-gradient-to-tr from-yellow-400/20 to-purple-400/10 rounded-full blur-3xl"></div>
-        {/* Small accent blob */}
-        <div className="absolute top-1/3 right-1/4 w-[200px] h-[200px] bg-purple-300/20 rounded-full blur-2xl"></div>
+    <div className="min-h-screen h-screen flex flex-col bg-white relative overflow-hidden">
+
+      {/* Centered Logo & Title at Top */}
+      <div className="relative z-10 pt-8 pb-6 text-center">
+        <Link href="/" className="inline-flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-lg">
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/>
+            </svg>
+          </div>
+          <span className="text-3xl font-bold">
+            <span className="text-black">Organize</span>
+            <span className="text-yellow-500 italic" style={{ fontFamily: 'cursive' }}>Now</span>
+          </span>
+        </Link>
+        <p className="text-gray-600 mt-2 text-sm">Your all-in-one productivity workspace</p>
       </div>
 
-      <div className="w-full max-w-md relative z-10">
-        {/* Logo Section */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity">
-            {/* Purple circle with white star/sparkle logo */}
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                {/* Thin sparkle icon */}
-                <path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/>
-              </svg>
+      {/* Main Content Area */}
+      <div className="flex-1 relative z-10 flex items-center justify-center px-4 lg:px-8">
+        <div className="w-full max-w-7xl mx-auto lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+          
+          {/* Left Side - Illustration & Decorative Elements */}
+          <div className="hidden lg:flex items-center justify-center relative">
+            
+            {/* Decorative icons floating around */}
+            <div className="absolute top-1/4 left-12 transform -translate-y-1/2">
+              <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-purple-100 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3s' }}>
+                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
             </div>
-            <span className="text-2xl font-bold">
-              <span className="text-black">Organize</span>
-              <span className="text-yellow-500 italic" style={{ fontFamily: 'cursive' }}>Now</span>
-            </span>
-          </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Welcome{' '}
-            <span className="text-purple-600 italic" style={{ fontFamily: 'cursive' }}>
-              back
-            </span>
-          </h1>
-          <p className="text-lg text-gray-600">Sign in to continue organizing</p>
-        </div>
+            
+            <div className="absolute bottom-1/4 right-12">
+              <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-yellow-100 animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '3s' }}>
+                <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+            </div>
 
-        {/* Form Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8 border-2 border-purple-100 hover:border-purple-200 transition-all duration-300">
-          <form className="space-y-5" onSubmit={onSubmit}>
+            {/* Main illustration */}
+            <div className="max-w-lg relative">
+              <img 
+                src="/DrawKit Vector Illustration Team Work/SVG/DrawKit Vector Illustration Team Work (7).svg" 
+                alt="Login Illustration" 
+                className="w-full h-auto mb-8"
+              />
+              <div className="text-center relative z-10">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                  Welcome back to{' '}
+                  <span className="text-purple-600 italic" style={{ fontFamily: 'cursive' }}>
+                    productivity
+                  </span>
+                </h2>
+                {/* <p className="text-lg text-gray-600 leading-relaxed">
+                  Continue managing your tasks, notes, and goals all in one beautiful workspace. Your organized life awaits!
+                </p> */}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Side - Form */}
+          <div className="w-full flex items-center justify-center">
+            <div className="w-full max-w-md">
+              {/* Form Card */}
+              <div className="bg-white rounded-3xl shadow-2xl p-8 border-2 border-purple-100 hover:border-purple-200 transition-all duration-300">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome{' '}
+              <span className="text-purple-600 italic" style={{ fontFamily: 'cursive' }}>
+                back
+              </span>
+            </h1>
+            <p className="text-base text-gray-600">Sign in to continue organizing</p>
+          </div>
+          <form className="space-y-4" onSubmit={onSubmit}>
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="email" className="block text-xs font-semibold text-gray-900 mb-1.5">
                 Email Address
               </label>
               <input
                 id="email"
                 type="email"
-                className="w-full rounded-xl border-2 border-gray-200 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
+                className="w-full rounded-lg border-2 border-gray-200 bg-white text-gray-900 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -100,13 +139,13 @@ function LoginForm() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
+              <label htmlFor="password" className="block text-xs font-semibold text-gray-900 mb-1.5">
                 Password
               </label>
               <input
                 id="password"
                 type="password"
-                className="w-full rounded-xl border-2 border-gray-200 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
+                className="w-full rounded-lg border-2 border-gray-200 bg-white text-gray-900 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -124,7 +163,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full rounded-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-4 text-base disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 shadow-xl shadow-purple-500/30 hover:shadow-2xl hover:scale-[1.02]"
+              className="w-full rounded-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-3 text-sm disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 shadow-lg shadow-purple-500/30 hover:shadow-xl hover:scale-[1.02]"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -137,8 +176,8 @@ function LoginForm() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+          <div className="mt-4 text-center">
+            <p className="text-xs text-gray-600">
               Don't have an account?{" "}
               <Link
                 href="/auth/signup"
@@ -148,14 +187,17 @@ function LoginForm() {
               </Link>
             </p>
           </div>
-        </div>
 
-        <p className="text-center text-xs text-gray-500 mt-6">
-          By signing in, you agree to our{" "}
-          <Link href="#" className="text-purple-600 hover:underline">Terms of Service</Link>
-          {" "}and{" "}
-          <Link href="#" className="text-purple-600 hover:underline">Privacy Policy</Link>
-        </p>
+          <p className="text-center text-xs text-gray-500 mt-4">
+            By signing in, you agree to our{" "}
+            <Link href="#" className="text-purple-600 hover:underline">Terms</Link>
+            {" "}and{" "}
+            <Link href="#" className="text-purple-600 hover:underline">Privacy Policy</Link>
+          </p>
+        </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Custom Styles */}

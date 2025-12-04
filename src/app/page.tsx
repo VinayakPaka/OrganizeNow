@@ -55,10 +55,10 @@ export default function LandingPage() {
       <nav className="relative z-50 bg-white border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               {/* Purple circle with white star/sparkle logo */}
-              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   {/* Thin sparkle icon */}
                   <path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/>
                 </svg>
@@ -140,7 +140,7 @@ export default function LandingPage() {
 
                 <p className="text-xl text-gray-600 mb-10 leading-relaxed max-w-xl">
                   Manage your tasks, notes, and schedules all in one place.
-                  A side project built with passion for modern productivity.
+                  A Original project built with passion for modern productivity.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -248,9 +248,10 @@ export default function LandingPage() {
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
                 Our{' '}
                 <span className="text-purple-600 italic" style={{ fontFamily: 'cursive' }}>
-                  powerful 
+                  powerful
                 </span>
-                {' '}features
+                {' '}
+                features
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Everything you need to stay organized and productive
@@ -335,15 +336,14 @@ export default function LandingPage() {
                 </span>
               </h2>
               <p className="text-xl text-gray-600">
-                Built as a side project with care and attention to detail
+                Built as a Original project with care and attention to detail
               </p>
             </div>
-            <div className="mb-8 flex justify-center">
+            <div className="mb-16 flex justify-center">
               <img 
                 src="/DrawKit Vector Illustration Team Work/SVG/DrawKit Vector Illustration Team Work (17).svg" 
                 alt="Pointing Illustration"
-                className="w-full max-w-md md:max-w-lg lg:max-w-xl h-auto mx-auto -mb-12 md:-mb-20 rotate-[13deg]"
-                style={{ transform: 'rotate(13deg)' }}
+                className="w-full max-w-xs md:max-w-sm h-auto mx-auto"
               />
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -428,7 +428,8 @@ export default function LandingPage() {
                   readTime: '5 min read',
                   category: 'Productivity',
                   icon: Target,
-                  gradient: 'from-purple-400 to-purple-600'
+                  gradient: 'from-purple-400 to-purple-600',
+                  fullContent: 'Task management is the cornerstone of productivity. Start by using the Eisenhower Matrix to categorize tasks by urgency and importance. Break large projects into smaller, actionable steps. Set realistic deadlines and use our smart reminders to stay on track. Review your progress weekly and adjust priorities as needed. Remember, effective task management is about working smarter, not harder.'
                 },
                 {
                   title: 'The Power of Digital Note-Taking',
@@ -437,7 +438,8 @@ export default function LandingPage() {
                   readTime: '7 min read',
                   category: 'Features',
                   icon: BookOpen,
-                  gradient: 'from-yellow-400 to-yellow-600'
+                  gradient: 'from-yellow-400 to-yellow-600',
+                  fullContent: 'Digital note-taking revolutionizes how you capture and organize ideas. Our BlockNote editor supports rich formatting, code blocks, tables, and more. Use tags to categorize notes for easy retrieval. Link related notes to build a knowledge network. Add images and attachments to create comprehensive documentation. The best part? Everything is searchable and accessible from anywhere.'
                 },
                 {
                   title: 'Secure Password Management',
@@ -446,48 +448,77 @@ export default function LandingPage() {
                   readTime: '6 min read',
                   category: 'Security',
                   icon: Shield,
-                  gradient: 'from-purple-500 to-purple-700'
+                  gradient: 'from-purple-500 to-purple-700',
+                  fullContent: 'Password security is critical in today\'s digital world. Our vault uses AES-256 encryption - the same standard used by banks and governments. Never reuse passwords across sites. Use our password generator to create strong, unique passwords. Enable two-factor authentication wherever possible. Store secure notes, API keys, and sensitive documents safely. Your data is encrypted both in transit and at rest.'
                 }
               ].map((post, index) => (
-                <Link
+                <div
                   key={index}
-                  href="#"
-                  className="group bg-white rounded-3xl overflow-hidden border-2 border-purple-100 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col cursor-pointer"
+                  className="group perspective-1000 h-[480px]"
                 >
-                  {/* Image/Icon Header */}
-                  <div className={`relative h-48 bg-gradient-to-br ${post.gradient} p-8 flex items-center justify-center overflow-hidden`}>
-                    <div className="absolute inset-0 bg-black/5"></div>
-                    <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <post.icon className="w-10 h-10 text-white" />
+                  <div className="relative w-full h-full transition-transform duration-700 transform-style-3d group-hover:rotate-y-180">
+                    {/* Front of card */}
+                    <div className="absolute inset-0 backface-hidden bg-white rounded-3xl overflow-hidden border-2 border-purple-100 shadow-lg flex flex-col cursor-pointer">
+                      {/* Image/Icon Header */}
+                      <div className={`relative h-48 bg-gradient-to-br ${post.gradient} p-8 flex items-center justify-center overflow-hidden`}>
+                        <div className="absolute inset-0 bg-black/5"></div>
+                        <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                          <post.icon className="w-10 h-10 text-white" />
+                        </div>
+                        {/* Category badge */}
+                        <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full">
+                          <span className="text-xs font-bold text-gray-900">{post.category}</span>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="p-6 flex-1 flex flex-col">
+                        <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
+                          <span className="text-purple-600 font-semibold">{post.date}</span>
+                          <span>•</span>
+                          <span>{post.readTime}</span>
+                        </div>
+
+                        <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                          {post.title}
+                        </h3>
+
+                        <p className="text-gray-600 mb-4 leading-relaxed flex-1 line-clamp-3">
+                          {post.excerpt}
+                        </p>
+
+                        <div className="inline-flex items-center gap-2 text-purple-600 font-semibold mt-auto">
+                          Hover to read more
+                          <ArrowRight className="w-4 h-4" />
+                        </div>
+                      </div>
                     </div>
-                    {/* Category badge */}
-                    <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full">
-                      <span className="text-xs font-bold text-gray-900">{post.category}</span>
+
+                    {/* Back of card */}
+                    <div className={`absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br ${post.gradient} rounded-3xl overflow-hidden border-2 border-purple-100 shadow-lg p-8 flex flex-col`}>
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full">
+                          <span className="text-xs font-bold text-gray-900">{post.category}</span>
+                        </div>
+                        <post.icon className="w-8 h-8 text-white" />
+                      </div>
+
+                      <h3 className="text-2xl font-bold text-white mb-4">
+                        {post.title}
+                      </h3>
+
+                      <p className="text-white/90 leading-relaxed text-sm flex-1 overflow-y-auto">
+                        {post.fullContent}
+                      </p>
+
+                      <div className="flex items-center gap-3 text-sm text-white/80 mt-6">
+                        <span className="font-semibold">{post.date}</span>
+                        <span>•</span>
+                        <span>{post.readTime}</span>
+                      </div>
                     </div>
                   </div>
-
-                  {/* Content */}
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
-                      <span className="text-purple-600 font-semibold">{post.date}</span>
-                      <span>•</span>
-                      <span>{post.readTime}</span>
-                    </div>
-
-                    <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
-
-                    <p className="text-gray-600 mb-4 leading-relaxed flex-1 line-clamp-3">
-                      {post.excerpt}
-                    </p>
-
-                    <div className="inline-flex items-center gap-2 text-purple-600 font-semibold hover:gap-3 transition-all mt-auto">
-                      Read Article
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </Link>
+                </div>
               ))}
             </div>
           </div>
@@ -510,7 +541,7 @@ export default function LandingPage() {
                   ?
                 </h2>
                 <p className="text-xl text-purple-100 mb-10 max-w-2xl mx-auto">
-                  Start organizing today with this free side project built for professionals like you
+                  Start organizing today with this free Original project built for professionals like you
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link
@@ -528,7 +559,7 @@ export default function LandingPage() {
                   </Link>
                 </div>
                 <p className="text-sm text-purple-200 mt-8">
-                  100% Free • Built as a side project • No credit card required
+                  100% Free • Built as a Original project •
                 </p>
               </div>
             </div>
@@ -539,10 +570,10 @@ export default function LandingPage() {
         <footer className="px-6 lg:px-8 py-12 bg-white border-t border-gray-100">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 {/* Purple circle with white star/sparkle logo */}
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
-                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     {/* Thin sparkle icon */}
                     <path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/>
                   </svg>
@@ -554,7 +585,7 @@ export default function LandingPage() {
                 </span>
               </div>
               <p className="text-sm text-gray-600">
-                © 2025 OrganizeNow. A side project built with passion.
+                © 2025 OrganizeNow. A Original project built with passion.
               </p>
             </div>
           </div>
@@ -617,6 +648,28 @@ export default function LandingPage() {
         /* Cursive font styling */
         [style*="font-family: cursive"] {
           font-family: 'Dancing Script', 'Indie Flower', cursive !important;
+        }
+
+        /* 3D Flip Card Styles */
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+
+        .transform-style-3d {
+          transform-style: preserve-3d;
+        }
+
+        .backface-hidden {
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+
+        .rotate-y-180 {
+          transform: rotateY(180deg);
+        }
+
+        .group:hover .group-hover\:rotate-y-180 {
+          transform: rotateY(180deg);
         }
       `}</style>
     </div>

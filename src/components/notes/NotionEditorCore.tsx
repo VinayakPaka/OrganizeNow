@@ -4,6 +4,7 @@ import { useEffect, useMemo, useImperativeHandle, forwardRef } from "react";
 import { PartialBlock, BlockNoteEditor } from "@blocknote/core";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
+import { useTheme } from "@/contexts/ThemeContext";
 import "@blocknote/core/style.css";
 import "@blocknote/mantine/style.css";
 
@@ -29,6 +30,9 @@ export const NotionEditorCore = forwardRef<NotionEditorHandle, NotionEditorCoreP
   editable = true,
   placeholder = "Type '/' for commands...",
 }, ref) => {
+  // Get current theme from context
+  const { theme } = useTheme();
+
   // Parse initial content with migration for BlockNote 0.42.0
   const initialBlocks = useMemo(() => {
     if (!initialContent) {
@@ -130,11 +134,11 @@ export const NotionEditorCore = forwardRef<NotionEditorHandle, NotionEditorCoreP
   }
 
   return (
-    <div className="notion-editor-wrapper dark" style={{ height: '100%', width: '100%' }}>
+    <div className={`notion-editor-wrapper ${theme}`} style={{ height: '100%', width: '100%' }}>
       <BlockNoteView
         editor={editor}
         editable={editable}
-        theme="dark"
+        theme={theme}
       />
     </div>
   );

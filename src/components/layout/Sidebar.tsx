@@ -28,17 +28,17 @@ export function Sidebar() {
     <aside className="h-screen bg-white dark:bg-black flex flex-col sticky top-0 w-64 border-r border-gray-100 dark:border-gray-700">
       {/* Logo */}
       <div className="p-6">
-        <Link href="/dashboard" className="flex items-center gap-3">
+        <Link href="/dashboard" className="flex items-center gap-2">
           {/* Purple circle with white star/sparkle logo */}
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="h-7 w-7 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               {/* Thin sparkle icon */}
               <path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/>
             </svg>
           </div>
           <span className="text-xl font-bold">
             <span className="text-gray-900 dark:text-white">Organize</span>
-            <span className="text-yellow-500 italic" style={{ fontFamily: 'cursive' }}>Now</span>
+            <span className="text-yellow-500" style={{ fontFamily: 'cursive', fontStyle: 'italic' }}>Now</span>
           </span>
         </Link>
       </div>
