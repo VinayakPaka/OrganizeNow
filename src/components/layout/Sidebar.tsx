@@ -29,10 +29,17 @@ export function Sidebar() {
       {/* Logo */}
       <div className="p-6">
         <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-            <span className="text-white text-xl font-bold">O</span>
+          {/* Purple circle with white star/sparkle logo */}
+          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {/* Thin sparkle icon */}
+              <path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/>
+            </svg>
           </div>
-          <span className="text-xl font-bold text-gray-900 dark:text-white">OrganizeNow</span>
+          <span className="text-xl font-bold">
+            <span className="text-gray-900 dark:text-white">Organize</span>
+            <span className="text-yellow-500 italic" style={{ fontFamily: 'cursive' }}>Now</span>
+          </span>
         </Link>
       </div>
 
@@ -117,10 +124,18 @@ export function Sidebar() {
       <div className="p-4 border-t border-gray-100 dark:border-gray-700">
         {user && (
           <div className="flex items-center gap-3 mb-4 px-3 py-3 rounded-2xl bg-gray-50 dark:bg-gray-700/50">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-md">
-              <span className="text-white font-semibold text-sm">
-                {user.name?.[0] || user.email[0].toUpperCase()}
-              </span>
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-md overflow-hidden">
+              {user.profilePicture ? (
+                <img
+                  src={user.profilePicture}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-white font-semibold text-sm">
+                  {user.name?.[0] || user.email[0].toUpperCase()}
+                </span>
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
@@ -176,6 +191,7 @@ function SidebarItem({
   return (
     <Link
       href={href}
+      prefetch={true}
       className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all ${
         isActive
           ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shadow-sm"

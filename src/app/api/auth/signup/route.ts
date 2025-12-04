@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         password_hash: passwordHash,
         name: name || null,
       })
-      .select('id, email, name, created_at')
+      .select('id, email, name, profile_picture, created_at')
       .single();
 
     if (createError || !newUser) {
@@ -75,6 +75,7 @@ export async function POST(request: NextRequest) {
           id: newUser.id,
           email: newUser.email,
           name: newUser.name,
+          profilePicture: newUser.profile_picture,
         },
         token,
       },

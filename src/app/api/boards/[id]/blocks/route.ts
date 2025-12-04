@@ -9,13 +9,16 @@ import { validateBody, blockSchema } from '@/lib/middleware/validation';
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
   if (authError || !user) {
     return unauthorizedResponse(authError || 'Not authenticated');
   }
+
+  // Await params in Next.js 15+
+  const { id } = await params;
 
   try {
     const body = await request.json();
@@ -34,7 +37,7 @@ export async function POST(
     const { data: board } = await supabaseAdmin
       .from('boards')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .single();
 
@@ -47,7 +50,7 @@ export async function POST(
       .from('content_blocks')
       .insert({
         user_id: user.userId,
-        board_id: params.id,
+        board_id: id,
         content_type: validatedData.content_type,
         content: validatedData.content,
         position_x: validatedData.position_x || 0,
@@ -75,13 +78,16 @@ export async function POST(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
   if (authError || !user) {
     return unauthorizedResponse(authError || 'Not authenticated');
   }
+
+  // Await params in Next.js 15+
+  const { id } = await params;
 
   try {
     const body = await request.json();
@@ -95,7 +101,7 @@ export async function PUT(
     const { data: board } = await supabaseAdmin
       .from('boards')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .single();
 

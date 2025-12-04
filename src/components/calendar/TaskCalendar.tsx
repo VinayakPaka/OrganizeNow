@@ -303,7 +303,11 @@ export function TaskCalendar({ tasks, onSelectTask }: TaskCalendarProps) {
         endAccessor="end"
         style={{ height: '100%', padding: '20px' }}
         view={view}
-        onView={setView}
+        onView={(newView) => {
+          if (newView === 'month' || newView === 'week' || newView === 'day' || newView === 'agenda') {
+            setView(newView);
+          }
+        }}
         date={currentDate}
         onNavigate={setCurrentDate}
         onSelectEvent={handleSelectEvent}

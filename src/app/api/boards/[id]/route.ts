@@ -9,7 +9,7 @@ import { validateBody, boardSchema } from '@/lib/middleware/validation';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
@@ -17,12 +17,15 @@ export async function GET(
     return unauthorizedResponse(authError || 'Not authenticated');
   }
 
+  // Await params in Next.js 15+
+  const { id } = await params;
+
   try {
     // Get board
     const { data: board, error: fetchError } = await supabaseAdmin
       .from('boards')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .single();
 
@@ -35,7 +38,7 @@ export async function GET(
     const { data: blocks, error: blocksError } = await supabaseAdmin
       .from('content_blocks')
       .select('*')
-      .eq('board_id', params.id)
+      .eq('board_id', id)
       .order('updated_at', { ascending: false });
 
     if (blocksError) {
@@ -84,13 +87,16 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
   if (authError || !user) {
     return unauthorizedResponse(authError || 'Not authenticated');
   }
+
+  // Await params in Next.js 15+
+  const { id } = await params;
 
   try {
     const body = await request.json();
@@ -112,7 +118,7 @@ export async function PUT(
         ...validatedData,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .select()
       .single();
@@ -134,7 +140,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
@@ -142,14 +148,17 @@ export async function DELETE(
     return unauthorizedResponse(authError || 'Not authenticated');
   }
 
+  // Await params in Next.js 15+
+  const { id } = await params;
+
   try {
-    console.log(`[Board Delete] Starting deletion of board ${params.id}`);
+    console.log(`[Board Delete] Starting deletion of board ${id}`);
 
     // First verify the board belongs to the user
     const { data: board, error: boardError } = await supabaseAdmin
       .from('boards')
       .select('id')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .single();
 
@@ -162,7 +171,7 @@ export async function DELETE(
     const { data: blocksData, error: blocksError } = await supabaseAdmin
       .from('content_blocks')
       .select('id')
-      .eq('board_id', params.id);
+      .eq('board_id', id);
 
     if (blocksError) {
       console.error('[Board Delete] Error fetching blocks:', blocksError);
@@ -206,7 +215,7 @@ export async function DELETE(
     const { error: deleteError } = await supabaseAdmin
       .from('boards')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId);
 
     if (deleteError) {

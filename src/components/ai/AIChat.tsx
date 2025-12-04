@@ -97,7 +97,7 @@ export function AIChat({ isOpen, onClose }: AIChatProps) {
     }
   };
 
-  const handleItemClick = (item: Message['relevantItems'][0]) => {
+  const handleItemClick = (item: NonNullable<Message['relevantItems']>[0]) => {
     if (!item) return;
 
     // Navigate to the relevant section

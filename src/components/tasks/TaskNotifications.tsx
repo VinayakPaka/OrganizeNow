@@ -113,7 +113,7 @@ export function TaskNotifications({ tasks }: TaskNotificationsProps) {
         try {
           browserNotificationRef.current = new Notification('⏰ Task Reminder Alarm', {
             body: `${task.title} - ${task.priority.toUpperCase()} Priority`,
-            icon: '/favicon.ico',
+            icon: '/favicon-new.svg',
             tag: task.id,
             requireInteraction: true,
           });

@@ -8,7 +8,7 @@ import { authenticateRequest, unauthorizedResponse, errorResponse, successRespon
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
@@ -16,11 +16,14 @@ export async function GET(
     return unauthorizedResponse(authError || 'Not authenticated');
   }
 
+  // Await params in Next.js 15+
+  const { id } = await params;
+
   try {
     const { data: task, error: fetchError } = await supabaseAdmin
       .from('tasks')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .single();
 
@@ -41,13 +44,16 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
   if (authError || !user) {
     return unauthorizedResponse(authError || 'Not authenticated');
   }
+
+  // Await params in Next.js 15+
+  const { id } = await params;
 
   try {
     const body = await request.json();
@@ -93,7 +99,7 @@ export async function PUT(
     const { data: updatedTask, error: updateError } = await supabaseAdmin
       .from('tasks')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId)
       .select()
       .single();
@@ -120,7 +126,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
@@ -128,11 +134,14 @@ export async function DELETE(
     return unauthorizedResponse(authError || 'Not authenticated');
   }
 
+  // Await params in Next.js 15+
+  const { id } = await params;
+
   try {
     const { error: deleteError } = await supabaseAdmin
       .from('tasks')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.userId);
 
     if (deleteError) {

@@ -13,7 +13,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>('light');
+  const [theme, setThemeState] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
 
   // Load theme from localStorage on mount
@@ -47,11 +47,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme(newTheme);
   };
 
-  // Prevent flash of unstyled content
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
+  // Always provide the context, even before mounting
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}

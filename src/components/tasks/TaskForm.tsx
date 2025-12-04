@@ -168,16 +168,16 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
         }
       }}
     >
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             {task ? 'Edit Task' : 'Create New Task'}
           </h2>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition text-gray-900 dark:text-white"
             aria-label="Close form"
           >
             <X size={24} />
@@ -188,7 +188,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
         <form onSubmit={handleSubmit} className="p-6 space-y-6" noValidate>
           {/* Title */}
           <div>
-            <label htmlFor="task-title" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="task-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Task Title *
             </label>
             <input
@@ -198,10 +198,10 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
               onChange={handleTitleChange}
               onBlur={() => validateTitle(title)}
               placeholder="e.g., Complete project report"
-              className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition ${
+              className={`w-full px-4 py-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 transition ${
                 titleError
-                  ? 'border-red-300 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-purple-500'
+                  ? 'border-red-300 dark:border-red-600 focus:ring-red-500'
+                  : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
               }`}
               maxLength={titleMaxLength}
               aria-required="true"
@@ -210,12 +210,12 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
             />
             <div className="flex items-center justify-between mt-1">
               {titleError ? (
-                <p id="title-error" className="text-sm text-red-600 flex items-center gap-1">
+                <p id="title-error" className="text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
                   <AlertCircle size={14} />
                   {titleError}
                 </p>
               ) : (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
                   {titleLength}/{titleMaxLength} characters
                 </span>
               )}
@@ -224,7 +224,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
 
           {/* Description */}
           <div>
-            <label htmlFor="task-description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="task-description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Description
             </label>
             <textarea
@@ -234,16 +234,16 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
               placeholder="Add more details about this task..."
               rows={3}
               maxLength={1000}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {description.length}/1000 characters
             </p>
           </div>
 
           {/* Due Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <Calendar size={16} className="inline mr-1" />
               Due Date
             </label>
@@ -253,21 +253,21 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
                 <button
                   type="button"
                   onClick={setToday}
-                  className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                  className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition"
                 >
                   Today
                 </button>
                 <button
                   type="button"
                   onClick={setTomorrow}
-                  className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                  className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition"
                 >
                   Tomorrow
                 </button>
                 <button
                   type="button"
                   onClick={setNextWeek}
-                  className="px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+                  className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition"
                 >
                   Next Week
                 </button>
@@ -279,14 +279,14 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
           </div>
 
           {/* Due Time */}
           <div>
-            <label htmlFor="task-due-time" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="task-due-time" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <Clock size={16} className="inline mr-1" />
               Due Time
             </label>
@@ -295,13 +295,13 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
               type="time"
               value={dueTime}
               onChange={(e) => setDueTime(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
           {/* Priority */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               <Flag size={16} className="inline mr-1" />
               Priority
             </label>
@@ -311,8 +311,8 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
                 onClick={() => setPriority('low')}
                 className={`px-4 py-3 rounded-lg border-2 transition ${
                   priority === 'low'
-                    ? 'border-green-500 bg-green-50 text-green-700'
-                    : 'border-gray-200 hover:border-green-300'
+                    ? 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 text-gray-900 dark:text-white'
                 }`}
                 aria-pressed={priority === 'low'}
               >
@@ -323,8 +323,8 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
                 onClick={() => setPriority('medium')}
                 className={`px-4 py-3 rounded-lg border-2 transition ${
                   priority === 'medium'
-                    ? 'border-yellow-500 bg-yellow-50 text-yellow-700'
-                    : 'border-gray-200 hover:border-yellow-300'
+                    ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-yellow-300 dark:hover:border-yellow-600 text-gray-900 dark:text-white'
                 }`}
                 aria-pressed={priority === 'medium'}
               >
@@ -335,8 +335,8 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
                 onClick={() => setPriority('high')}
                 className={`px-4 py-3 rounded-lg border-2 transition ${
                   priority === 'high'
-                    ? 'border-red-500 bg-red-50 text-red-700'
-                    : 'border-gray-200 hover:border-red-300'
+                    ? 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-600 text-gray-900 dark:text-white'
                 }`}
                 aria-pressed={priority === 'high'}
               >
@@ -347,7 +347,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
 
           {/* Category */}
           <div>
-            <label htmlFor="task-category" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="task-category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Category (Optional)
             </label>
             <input
@@ -357,14 +357,14 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
               onChange={(e) => setCategory(e.target.value)}
               placeholder="e.g., Work, Personal, Shopping"
               maxLength={50}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
 
           {/* Reminder Settings */}
-          <div className="border-t border-gray-200 pt-6">
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
             <div className="flex items-center justify-between mb-4">
-              <label className="flex items-center text-sm font-medium text-gray-700">
+              <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300">
                 <Bell size={16} className="mr-2" />
                 Enable Reminder
               </label>
@@ -372,7 +372,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
                 type="button"
                 onClick={() => setReminderEnabled(!reminderEnabled)}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
-                  reminderEnabled ? 'bg-purple-600' : 'bg-gray-300'
+                  reminderEnabled ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-700'
                 }`}
                 role="switch"
                 aria-checked={reminderEnabled}
@@ -388,7 +388,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
 
             {reminderEnabled && (
               <div className="space-y-3">
-                <label htmlFor="reminder-minutes" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="reminder-minutes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Remind me before
                 </label>
                 <select
@@ -402,7 +402,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
                       setCustomMinutesError('');
                     }
                   }}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   <option value={5}>5 minutes</option>
                   <option value={15}>15 minutes</option>
@@ -415,7 +415,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
 
                 {reminderMinutes === 0 && (
                   <div>
-                    <label htmlFor="custom-minutes" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="custom-minutes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Custom minutes before
                     </label>
                     <input
@@ -427,21 +427,21 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
                       onChange={handleCustomMinutesChange}
                       onBlur={() => validateCustomMinutes(customMinutes)}
                       placeholder="Enter minutes (e.g., 45)"
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition ${
+                      className={`w-full px-4 py-3 border rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 transition ${
                         customMinutesError
-                          ? 'border-red-300 focus:ring-red-500'
-                          : 'border-gray-300 focus:ring-purple-500'
+                          ? 'border-red-300 dark:border-red-600 focus:ring-red-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
                       }`}
                       aria-invalid={!!customMinutesError}
                       aria-describedby={customMinutesError ? "custom-minutes-error" : "custom-minutes-help"}
                     />
                     {customMinutesError ? (
-                      <p id="custom-minutes-error" className="text-sm text-red-600 mt-1 flex items-center gap-1">
+                      <p id="custom-minutes-error" className="text-sm text-red-600 dark:text-red-400 mt-1 flex items-center gap-1">
                         <AlertCircle size={14} />
                         {customMinutesError}
                       </p>
                     ) : (
-                      <p id="custom-minutes-help" className="text-xs text-gray-500 mt-1">
+                      <p id="custom-minutes-help" className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Enter any value from {REMINDER_LIMITS.MIN_MINUTES} to {REMINDER_LIMITS.MAX_MINUTES} minutes (1 week)
                       </p>
                     )}
@@ -463,7 +463,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition"
+              className="px-6 py-3 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition"
             >
               Cancel
             </button>

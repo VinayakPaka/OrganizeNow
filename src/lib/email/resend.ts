@@ -5,8 +5,15 @@
 
 import { Resend } from 'resend';
 
-// Initialize Resend with API key from environment variables
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-initialize Resend to avoid build errors when API key is not set
+let resend: Resend | null = null;
+
+function getResendClient(): Resend {
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY || '');
+  }
+  return resend;
+}
 
 export interface TaskReminderEmailData {
   to: string;
@@ -48,7 +55,7 @@ export async function sendTaskReminderEmail(data: TaskReminderEmailData) {
 
     const formattedTime = dueTime || '';
 
-    const { data: result, error } = await resend.emails.send({
+    const { data: result, error } = await getResendClient().emails.send({
       from: 'OrganizeNow <reminders@organizenow.app>', // Change this to your verified domain
       to: [to],
       subject: `⏰ Task Reminder: ${taskTitle}`,

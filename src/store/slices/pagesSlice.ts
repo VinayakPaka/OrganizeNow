@@ -31,6 +31,7 @@ interface UpdatePageData {
   title?: string;
   content?: string;
   icon?: string;
+  is_archived?: boolean;
 }
 
 // Initial state

@@ -3,7 +3,7 @@ import './globals.css';
 import { SupabaseProvider } from '@/components/providers/supabase-provider';
 import { ReduxProvider } from '@/components/providers/redux-provider';
 import { AuthProvider } from '@/components/auth/AuthProvider';
-import { Sidebar } from '@/components/layout/Sidebar';
+import { LayoutWrapper } from '@/components/layout/LayoutWrapper';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 
@@ -14,7 +14,7 @@ export const metadata = {
   title: 'OrganizeNow - Smart Task Manager',
   description: 'Organize your tasks with smart reminders',
   icons: {
-    icon: '/favicon.svg',
+    icon: '/favicon-new.svg',
   },
 };
 
@@ -49,12 +49,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ReduxProvider>
             <SupabaseProvider>
               <AuthProvider>
-                <div className="flex h-screen bg-white dark:bg-black">
-                  <Sidebar />
-                  <div className="flex-1 flex flex-col overflow-hidden">
-                    <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100">{children}</main>
-                  </div>
-                </div>
+                <LayoutWrapper>
+                  {children}
+                </LayoutWrapper>
               </AuthProvider>
             </SupabaseProvider>
           </ReduxProvider>

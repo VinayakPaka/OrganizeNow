@@ -2,7 +2,16 @@
 const config = {
   // Image optimization
   images: {
-    domains: ['localhost'],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
+        hostname: 'localhost',
+      },
+    ],
   },
 
   // Performance optimizations
@@ -10,46 +19,49 @@ const config = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
-  // Webpack optimizations
-  webpack: (config, { dev, isServer }) => {
-    // Handle image assets
-    config.module.rules.push({
-      test: /\.(ico|png|jpg|jpeg|gif|svg)$/,
-      type: 'asset/resource',
-    });
-
-    // Optimize builds
-    if (!dev && !isServer) {
-      // Split chunks for better caching
-      config.optimization = {
-        ...config.optimization,
-        splitChunks: {
-          chunks: 'all',
-          cacheGroups: {
-            default: false,
-            vendors: false,
-            // Vendor chunk for node_modules
-            vendor: {
-              name: 'vendor',
-              chunks: 'all',
-              test: /node_modules/,
-              priority: 20,
-            },
-            // Common chunk for shared code
-            common: {
-              name: 'common',
-              minChunks: 2,
-              chunks: 'all',
-              priority: 10,
-              reuseExistingChunk: true,
-              enforce: true,
-            },
-          },
+  // Experimental features for faster compilation
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react',
+      'react-icons',
+      '@mantine/core',
+      '@mantine/hooks',
+      'date-fns',
+      'react-big-calendar',
+      '@blocknote/core',
+      '@blocknote/react',
+      '@blocknote/mantine',
+    ],
+    // Use SWC for faster compilation
+    swcPlugins: [],
+    // Optimize CSS
+    optimizeCss: true,
+    // Turbo mode for faster builds
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
         },
-      };
-    }
+      },
+    },
+  },
 
-    return config;
+  // Transpile specific heavy packages
+  transpilePackages: [
+    '@blocknote/core',
+    '@blocknote/react',
+    '@blocknote/mantine',
+    'react-big-calendar',
+  ],
+
+  // Turbopack configuration (Next.js 16+ default bundler)
+  turbopack: {
+    // Turbopack handles most optimizations automatically
+    // and is significantly faster than webpack
+    resolveAlias: {
+      // Add any module aliases if needed
+    },
   },
 
   // Security headers
@@ -73,10 +85,6 @@ const config = {
           {
             key: 'X-Content-Type-Options',
             value: 'nosniff'
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block'
           },
           {
             key: 'Referrer-Policy',

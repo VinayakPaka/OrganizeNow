@@ -5,28 +5,62 @@
 
 'use client';
 
-import { useEffect, useState, useRef, useMemo } from 'react';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { useEffect, useState, useRef, useMemo, Suspense } from 'react';
+import dynamic from 'next/dynamic';
+import { format } from 'date-fns';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { fetchPages, createPage, updatePage, deletePage, Page } from '@/store/slices/pagesSlice';
-import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
-import { enUS } from 'date-fns/locale';
-import { NotionEditor, NotionEditorHandle } from '@/components/notes/NotionEditor';
+import type { View } from 'react-big-calendar';
+import type { NotionEditorHandle } from '@/components/notes/NotionEditor';
 import { AlertModal, ConfirmModal } from '@/components/ui/Modal';
 import { Loader2, Calendar as CalendarIcon, X, Save, Trash2, Bell, Settings, Search } from 'lucide-react';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-const locales = {
-  'en-US': enUS,
+// Dynamically import heavy libraries
+const ReactBigCalendar = dynamic(
+  () => import('react-big-calendar').then(mod => ({ default: mod.Calendar })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+        <span className="ml-3 text-gray-600 dark:text-gray-400">Loading calendar...</span>
+      </div>
+    ),
+  }
+);
+
+const NotionEditor = dynamic(
+  () => import('@/components/notes/NotionEditor').then(mod => ({ default: mod.NotionEditor })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    ),
+  }
+);
+
+// Import date-fns and create localizer dynamically
+let localizer: any = null;
+const getLocalizer = async () => {
+  if (localizer) return localizer;
+
+  const { dateFnsLocalizer } = await import('react-big-calendar');
+  const { format, parse, startOfWeek, getDay } = await import('date-fns');
+  const { enUS } = await import('date-fns/locale/en-US');
+
+  localizer = dateFnsLocalizer({
+    format,
+    parse,
+    startOfWeek,
+    getDay,
+    locales: { 'en-US': enUS },
+  });
+
+  return localizer;
 };
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
 
 interface CalendarEvent {
   id: string;
@@ -52,6 +86,12 @@ export default function CalendarPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorAlert, setErrorAlert] = useState<{ show: boolean; message: string }>({ show: false, message: '' });
   const [confirmDelete, setConfirmDelete] = useState<{ show: boolean; noteId: string | null }>({ show: false, noteId: null });
+  const [calendarLocalizer, setCalendarLocalizer] = useState<any>(null);
+
+  // Load localizer lazily
+  useEffect(() => {
+    getLocalizer().then(setCalendarLocalizer);
+  }, []);
 
   // Fetch pages on mount
   useEffect(() => {
@@ -130,11 +170,12 @@ export default function CalendarPage() {
     setSelectedDate(start);
   };
 
-  const handleSelectEvent = (event: CalendarEvent) => {
-    setSelectedNote(event.resource);
-    setNoteTitle(event.resource.title);
-    setNoteContent(event.resource.content);
-    setSelectedDate(event.start);
+  const handleSelectEvent = (event: object) => {
+    const calEvent = event as CalendarEvent;
+    setSelectedNote(calEvent.resource);
+    setNoteTitle(calEvent.resource.title);
+    setNoteContent(calEvent.resource.content);
+    setSelectedDate(calEvent.start);
   };
 
   const handleSaveNote = async () => {
@@ -373,21 +414,28 @@ export default function CalendarPage() {
               }
             `}</style>
 
-            <Calendar
-              localizer={localizer}
-              events={events}
-              startAccessor="start"
-              endAccessor="end"
-              style={{ height: '100%' }}
-              view={view}
-              onView={(newView) => setView(newView)}
-              date={currentDate}
-              onNavigate={setCurrentDate}
-              onSelectEvent={handleSelectEvent}
-              onSelectSlot={handleSelectSlot}
-              selectable
-              eventPropGetter={eventStyleGetter}
-            />
+            {calendarLocalizer ? (
+              <ReactBigCalendar
+                localizer={calendarLocalizer}
+                events={events}
+                startAccessor={(event: object) => (event as CalendarEvent).start}
+                endAccessor={(event: object) => (event as CalendarEvent).end}
+                style={{ height: '100%' }}
+                view={view}
+                onView={(newView) => setView(newView)}
+                date={currentDate}
+                onNavigate={setCurrentDate}
+                onSelectEvent={handleSelectEvent}
+                onSelectSlot={handleSelectSlot}
+                selectable
+                eventPropGetter={eventStyleGetter}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-96">
+                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+                <span className="ml-3 text-gray-600 dark:text-gray-400">Loading calendar...</span>
+              </div>
+            )}
           </div>
         )}
       </div>

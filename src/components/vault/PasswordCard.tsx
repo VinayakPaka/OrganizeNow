@@ -67,7 +67,7 @@ export function PasswordCard({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-all">
+    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition-all">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -78,7 +78,7 @@ export function PasswordCard({
 
           {/* Service Name & URL */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-0.5">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-0.5">
               {password.service_name}
             </h3>
             {password.url && (
@@ -86,7 +86,7 @@ export function PasswordCard({
                 href={password.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-purple-600 hover:text-purple-700 flex items-center gap-1"
+                className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 flex items-center gap-1"
                 onClick={(e) => e.stopPropagation()}
               >
                 <ExternalLink size={12} />
@@ -101,40 +101,40 @@ export function PasswordCard({
           <button
             type="button"
             onClick={onEdit}
-            className="p-2 hover:bg-gray-100 rounded-lg transition"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
             title="Edit"
             aria-label="Edit password"
           >
-            <Edit size={16} className="text-gray-600" />
+            <Edit size={16} className="text-gray-600 dark:text-gray-400" />
           </button>
           <button
             type="button"
             onClick={onDelete}
-            className="p-2 hover:bg-red-50 rounded-lg transition"
+            className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition"
             title="Delete"
             aria-label="Delete password"
           >
-            <Trash2 size={16} className="text-red-600" />
+            <Trash2 size={16} className="text-red-600 dark:text-red-500" />
           </button>
         </div>
       </div>
 
       {/* Username */}
       <div className="mb-3">
-        <label className="text-xs text-gray-500 block mb-1">Username</label>
-        <div className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
-          <span className="text-sm text-gray-900">{password.username}</span>
+        <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Username</label>
+        <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-lg px-3 py-2">
+          <span className="text-sm text-gray-900 dark:text-gray-100">{password.username}</span>
           <button
             type="button"
             onClick={() => handleCopy(password.username, 'username')}
-            className="p-1 hover:bg-gray-200 rounded transition"
+            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition"
             title="Copy username"
             aria-label="Copy username"
           >
             {copiedField === 'username' ? (
-              <CheckCircle size={14} className="text-green-600" />
+              <CheckCircle size={14} className="text-green-600 dark:text-green-500" />
             ) : (
-              <Copy size={14} className="text-gray-600" />
+              <Copy size={14} className="text-gray-600 dark:text-gray-400" />
             )}
           </button>
         </div>
@@ -142,9 +142,9 @@ export function PasswordCard({
 
       {/* Password */}
       <div className="mb-3">
-        <label className="text-xs text-gray-500 block mb-1">Password</label>
-        <div className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
-          <span className="text-sm text-gray-900 font-mono">
+        <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Password</label>
+        <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900 rounded-lg px-3 py-2">
+          <span className="text-sm text-gray-900 dark:text-gray-100 font-mono">
             {showPassword && decryptedPassword ? decryptedPassword : '••••••••••••'}
           </span>
           <div className="flex items-center gap-1">
@@ -152,28 +152,28 @@ export function PasswordCard({
               <button
                 type="button"
                 onClick={() => handleCopy(decryptedPassword, 'password')}
-                className="p-1 hover:bg-gray-200 rounded transition"
+                className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition"
                 title="Copy password"
                 aria-label="Copy password"
               >
                 {copiedField === 'password' ? (
-                  <CheckCircle size={14} className="text-green-600" />
+                  <CheckCircle size={14} className="text-green-600 dark:text-green-500" />
                 ) : (
-                  <Copy size={14} className="text-gray-600" />
+                  <Copy size={14} className="text-gray-600 dark:text-gray-400" />
                 )}
               </button>
             )}
             <button
               type="button"
               onClick={handleTogglePassword}
-              className="p-1 hover:bg-gray-200 rounded transition"
+              className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition"
               title={showPassword ? 'Hide password' : 'Show password'}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
-                <EyeOff size={14} className="text-gray-600" />
+                <EyeOff size={14} className="text-gray-600 dark:text-gray-400" />
               ) : (
-                <Eye size={14} className="text-gray-600" />
+                <Eye size={14} className="text-gray-600 dark:text-gray-400" />
               )}
             </button>
           </div>
@@ -183,16 +183,16 @@ export function PasswordCard({
       {/* Notes */}
       {password.notes && (
         <div>
-          <label className="text-xs text-gray-500 block mb-1">Notes</label>
-          <p className="text-sm text-gray-700 bg-gray-50 rounded-lg px-3 py-2 line-clamp-2">
+          <label className="text-xs text-gray-500 dark:text-gray-400 block mb-1">Notes</label>
+          <p className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 rounded-lg px-3 py-2 line-clamp-2">
             {password.notes}
           </p>
         </div>
       )}
 
       {/* Footer */}
-      <div className="mt-4 pt-3 border-t border-gray-100">
-        <div className="text-xs text-gray-500">
+      <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+        <div className="text-xs text-gray-500 dark:text-gray-400">
           Updated {formatDate(password.updated_at)}
         </div>
       </div>

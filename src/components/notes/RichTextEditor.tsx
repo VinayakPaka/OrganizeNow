@@ -68,16 +68,16 @@ export function RichTextEditor({
   }
 
   return (
-    <div className="border border-gray-200 rounded-lg bg-white">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900">
       {/* Toolbar */}
       {editable && (
-        <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-200 bg-gray-50">
+        <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
           {/* Undo/Redo */}
           <button
             type="button"
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().undo()}
-            className="p-2 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed dark:text-gray-300"
             title="Undo"
           >
             <Undo size={16} />
@@ -86,7 +86,7 @@ export function RichTextEditor({
             type="button"
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().redo()}
-            className="p-2 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed dark:text-gray-300"
             title="Redo"
           >
             <Redo size={16} />

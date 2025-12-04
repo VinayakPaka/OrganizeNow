@@ -8,13 +8,16 @@ import { authenticateRequest, unauthorizedResponse, errorResponse, successRespon
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string; blockId: string } }
+  { params }: { params: Promise<{ id: string; blockId: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
   if (authError || !user) {
     return unauthorizedResponse(authError || 'Not authenticated');
   }
+
+  // Await params in Next.js 15+
+  const { id, blockId } = await params;
 
   try {
     const body = await request.json();
@@ -26,9 +29,9 @@ export async function PUT(
         ...body,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', params.blockId)
+      .eq('id', blockId)
       .eq('user_id', user.userId)
-      .eq('board_id', params.id)
+      .eq('board_id', id)
       .select()
       .single();
 
@@ -49,7 +52,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string; blockId: string } }
+  { params }: { params: Promise<{ id: string; blockId: string }> }
 ) {
   const { user, error: authError } = await authenticateRequest(request);
 
@@ -57,13 +60,16 @@ export async function DELETE(
     return unauthorizedResponse(authError || 'Not authenticated');
   }
 
+  // Await params in Next.js 15+
+  const { id, blockId } = await params;
+
   try {
     const { error: deleteError } = await supabaseAdmin
       .from('content_blocks')
       .delete()
-      .eq('id', params.blockId)
+      .eq('id', blockId)
       .eq('user_id', user.userId)
-      .eq('board_id', params.id);
+      .eq('board_id', id);
 
     if (deleteError) {
       console.error('Delete block error:', deleteError);

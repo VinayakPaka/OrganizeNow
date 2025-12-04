@@ -136,14 +136,14 @@ export function PasswordForm({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-900">{title}</h2>
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">{title}</h2>
           <button
             type="button"
             onClick={onCancel}
-            className="p-2 hover:bg-gray-100 rounded-lg transition"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition text-gray-900 dark:text-white"
           >
             <X size={20} />
           </button>
@@ -153,7 +153,7 @@ export function PasswordForm({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Service Name */}
           <div>
-            <label htmlFor="serviceName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="serviceName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Service Name *
             </label>
             <input
@@ -162,7 +162,7 @@ export function PasswordForm({
               value={serviceName}
               onChange={(e) => setServiceName(e.target.value)}
               placeholder="e.g., GitHub, Gmail, Netflix"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               required
               disabled={isLoading}
             />
@@ -170,7 +170,7 @@ export function PasswordForm({
 
           {/* Username/Email */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Username/Email *
             </label>
             <input
@@ -179,7 +179,7 @@ export function PasswordForm({
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="e.g., user@example.com"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               required
               disabled={isLoading}
             />
@@ -187,7 +187,7 @@ export function PasswordForm({
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Password *
             </label>
             <div className="relative">
@@ -197,7 +197,7 @@ export function PasswordForm({
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter password"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-20"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-20"
                 required
                 disabled={isLoading}
               />
@@ -205,23 +205,23 @@ export function PasswordForm({
                 <button
                   type="button"
                   onClick={generatePassword}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
                   title="Generate password"
                   disabled={isLoading}
                 >
-                  <RefreshCw size={14} className="text-gray-600" />
+                  <RefreshCw size={14} className="text-gray-600 dark:text-gray-400" />
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition"
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition"
                   title={showPassword ? 'Hide' : 'Show'}
                   disabled={isLoading}
                 >
                   {showPassword ? (
-                    <EyeOff size={14} className="text-gray-600" />
+                    <EyeOff size={14} className="text-gray-600 dark:text-gray-400" />
                   ) : (
-                    <Eye size={14} className="text-gray-600" />
+                    <Eye size={14} className="text-gray-600 dark:text-gray-400" />
                   )}
                 </button>
               </div>
@@ -231,12 +231,12 @@ export function PasswordForm({
             {password && (
               <div className="mt-2">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-600">Password Strength:</span>
-                  <span className={`text-xs font-medium ${strength.label === 'Weak' ? 'text-red-600' : strength.label === 'Fair' ? 'text-yellow-600' : strength.label === 'Good' ? 'text-blue-600' : 'text-green-600'}`}>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">Password Strength:</span>
+                  <span className={`text-xs font-medium ${strength.label === 'Weak' ? 'text-red-600 dark:text-red-400' : strength.label === 'Fair' ? 'text-yellow-600 dark:text-yellow-400' : strength.label === 'Good' ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}>
                     {strength.label}
                   </span>
                 </div>
-                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                   <div
                     className={`h-full ${strength.color} transition-all`}
                     style={{ width: `${(strength.score / 5) * 100}%` }}
@@ -248,7 +248,7 @@ export function PasswordForm({
 
           {/* URL */}
           <div>
-            <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Website URL (Optional)
             </label>
             <input
@@ -257,17 +257,17 @@ export function PasswordForm({
               value={url}
               onChange={handleUrlChange}
               placeholder="https://example.com"
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent ${
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:border-transparent ${
                 urlError
-                  ? 'border-red-300 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-purple-500'
+                  ? 'border-red-300 dark:border-red-600 focus:ring-red-500'
+                  : 'border-gray-300 dark:border-gray-600 focus:ring-purple-500'
               }`}
               disabled={isLoading}
               aria-invalid={!!urlError}
               aria-describedby={urlError ? 'url-error' : undefined}
             />
             {urlError && (
-              <p id="url-error" className="text-sm text-red-600 mt-1 flex items-center gap-1">
+              <p id="url-error" className="text-sm text-red-600 dark:text-red-400 mt-1 flex items-center gap-1">
                 <X size={14} />
                 {urlError}
               </p>
@@ -276,7 +276,7 @@ export function PasswordForm({
 
           {/* Notes */}
           <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Notes (Optional)
             </label>
             <textarea
@@ -285,7 +285,7 @@ export function PasswordForm({
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add any additional notes..."
               rows={3}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
               disabled={isLoading}
             />
           </div>
@@ -295,7 +295,7 @@ export function PasswordForm({
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
               disabled={isLoading}
             >
               Cancel

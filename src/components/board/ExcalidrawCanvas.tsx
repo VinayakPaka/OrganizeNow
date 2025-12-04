@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
-import type { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types";
-import type { AppState, BinaryFiles } from "@excalidraw/excalidraw/types/types";
 import { useAppDispatch } from "@/store/hooks";
 import { fetchBoardById } from "@/store/slices/boardsSlice";
+
+// Define types locally to avoid missing type declarations
+type ExcalidrawElement = any;
+type AppState = any;
+type BinaryFiles = any;
 
 // Dynamically import Excalidraw to avoid SSR issues
 const Excalidraw = dynamic(

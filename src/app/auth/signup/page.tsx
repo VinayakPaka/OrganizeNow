@@ -57,26 +57,54 @@ export default function SignupPage() {
   const showPasswordMismatch = confirmPassword.length > 0 && !passwordMatch;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-violet-50 p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative overflow-hidden">
+      {/* Decorative Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Top right gradient blob */}
+        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-gradient-to-br from-purple-400/30 to-purple-600/20 rounded-full blur-3xl"></div>
+        {/* Bottom left gradient blob */}
+        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-gradient-to-tr from-yellow-400/20 to-purple-400/10 rounded-full blur-3xl"></div>
+        {/* Small accent blob */}
+        <div className="absolute top-1/3 right-1/4 w-[200px] h-[200px] bg-purple-300/20 rounded-full blur-2xl"></div>
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo Section */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent mb-2">
-            Get Started
+          <Link href="/" className="inline-flex items-center gap-3 mb-6 hover:opacity-80 transition-opacity">
+            {/* Purple circle with white star/sparkle logo */}
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md">
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                {/* Thin sparkle icon */}
+                <path d="M12 3v18M3 12h18M6.5 6.5l11 11M17.5 6.5l-11 11"/>
+              </svg>
+            </div>
+            <span className="text-2xl font-bold">
+              <span className="text-black">Organize</span>
+              <span className="text-yellow-500 italic" style={{ fontFamily: 'cursive' }}>Now</span>
+            </span>
+          </Link>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Get{' '}
+            <span className="text-purple-600 italic" style={{ fontFamily: 'cursive' }}>
+              started
+            </span>
           </h1>
-          <p className="text-gray-600 text-sm">Create your OrganizeNow account</p>
+          <p className="text-lg text-gray-600">Start organizing your life today</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <form className="space-y-4" onSubmit={onSubmit}>
+        {/* Form Card */}
+        <div className="bg-white rounded-3xl shadow-2xl p-8 border-2 border-purple-100 hover:border-purple-200 transition-all duration-300">
+          <form className="space-y-5" onSubmit={onSubmit}>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Name (Optional)
+              <label htmlFor="name" className="block text-sm font-semibold text-gray-900 mb-2">
+                Full Name <span className="text-gray-400 font-normal">(Optional)</span>
               </label>
               <input
                 id="name"
                 type="text"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="Enter your name"
+                className="w-full rounded-xl border-2 border-gray-200 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
+                placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 disabled={isLoading}
@@ -84,14 +112,14 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
+                Email Address
               </label>
               <input
                 id="email"
                 type="email"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="Enter your email"
+                className="w-full rounded-xl border-2 border-gray-200 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -100,47 +128,48 @@ export default function SignupPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-900 mb-2">
                 Password
               </label>
               <input
                 id="password"
                 type="password"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
-                placeholder="Create a password (min. 8 characters)"
+                className="w-full rounded-xl border-2 border-gray-200 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition placeholder:text-gray-400 hover:border-gray-300"
+                placeholder="Min. 8 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={8}
                 disabled={isLoading}
               />
+              <p className="text-xs text-gray-500 mt-1.5">Must be at least 8 characters long</p>
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-900 mb-2">
                 Confirm Password
               </label>
               <input
                 id="confirmPassword"
                 type="password"
-                className={`w-full rounded-lg border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent transition ${
+                className={`w-full rounded-xl border-2 bg-white text-gray-900 px-4 py-3.5 text-base focus:outline-none focus:ring-2 transition placeholder:text-gray-400 ${
                   showPasswordMismatch
-                    ? "border-red-300 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-purple-500"
+                    ? "border-red-300 focus:ring-red-500 focus:border-red-500"
+                    : "border-gray-200 focus:ring-purple-500 focus:border-purple-500 hover:border-gray-300"
                 }`}
-                placeholder="Confirm your password"
+                placeholder="Re-enter your password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={isLoading}
               />
               {showPasswordMismatch && (
-                <p className="text-xs text-red-600 mt-1">Passwords do not match</p>
+                <p className="text-xs text-red-600 mt-1.5 font-medium">⚠ Passwords do not match</p>
               )}
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium">
                 {error}
               </div>
             )}
@@ -148,9 +177,16 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={isLoading || showPasswordMismatch}
-              className="w-full rounded-lg bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-medium py-3 text-sm disabled:opacity-60 disabled:cursor-not-allowed transition shadow-md hover:shadow-lg"
+              className="w-full rounded-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-4 text-base disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 shadow-xl shadow-purple-500/30 hover:shadow-2xl hover:scale-[1.02]"
             >
-              {isLoading ? "Creating account..." : "Create Account"}
+              {isLoading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Creating account...
+                </span>
+              ) : (
+                "Create Account"
+              )}
             </button>
           </form>
 
@@ -159,7 +195,7 @@ export default function SignupPage() {
               Already have an account?{" "}
               <Link
                 href="/auth/login"
-                className="font-medium text-purple-600 hover:text-purple-700 transition"
+                className="font-bold text-purple-600 hover:text-purple-700 transition-colors"
               >
                 Sign in
               </Link>
@@ -168,9 +204,20 @@ export default function SignupPage() {
         </div>
 
         <p className="text-center text-xs text-gray-500 mt-6">
-          By signing up, you agree to our Terms of Service and Privacy Policy
+          By signing up, you agree to our{" "}
+          <Link href="#" className="text-purple-600 hover:underline">Terms of Service</Link>
+          {" "}and{" "}
+          <Link href="#" className="text-purple-600 hover:underline">Privacy Policy</Link>
         </p>
       </div>
+
+      {/* Custom Styles */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+        [style*="font-family: cursive"] {
+          font-family: 'Dancing Script', cursive !important;
+        }
+      `}</style>
     </div>
   );
 }

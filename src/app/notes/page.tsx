@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   fetchPages,
@@ -10,11 +11,30 @@ import {
   Page,
 } from '@/store/slices/pagesSlice';
 import { NotesList } from '@/components/notes/NotesList';
-import { NotionEditor, NotionEditorHandle } from '@/components/notes/NotionEditor';
-import { NotesAIToolbar } from '@/components/notes/NotesAIToolbar';
+import type { NotionEditorHandle } from '@/components/notes/NotionEditor';
 import { Save, Loader2, Search, Bell, Settings } from 'lucide-react';
 import { AlertModal, ConfirmModal } from '@/components/ui/Modal';
 import { useRouter } from 'next/navigation';
+
+// Dynamically import heavy components
+const NotionEditor = dynamic(
+  () => import('@/components/notes/NotionEditor').then(mod => ({ default: mod.NotionEditor })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    ),
+  }
+);
+
+const NotesAIToolbar = dynamic(
+  () => import('@/components/notes/NotesAIToolbar').then(mod => ({ default: mod.NotesAIToolbar })),
+  {
+    ssr: false,
+  }
+);
 
 /**
  * Notes Dashboard Page

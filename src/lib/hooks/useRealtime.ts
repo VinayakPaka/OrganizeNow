@@ -44,12 +44,15 @@ export function useRealtime<T = any>(
 
       // Create new subscription
       const channel = supabase.channel('realtime')
-        .on<RealtimePostgresChangesPayload<T>>('postgres_changes', {
-          event: options.event || '*',
-          schema: options.schema || 'public',
-          table: options.table,
-          filter: options.filter,
-        }, (payload) => {
+        .on<RealtimePostgresChangesPayload<T>>(
+          'postgres_changes' as any,
+          {
+            event: options.event || '*',
+            schema: options.schema || 'public',
+            table: options.table,
+            filter: options.filter,
+          },
+          (payload: any) => {
           try {
             // Pass the relevant record and eventType to the callback
             if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {

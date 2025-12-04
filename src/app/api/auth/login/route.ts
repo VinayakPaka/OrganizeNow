@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     // Find user by email
     const { data: user, error: fetchError } = await supabaseAdmin
       .from('users')
-      .select('id, email, name, password_hash, created_at')
+      .select('id, email, name, password_hash, profile_picture, created_at')
       .eq('email', email)
       .single();
 
@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
         id: user.id,
         email: user.email,
         name: user.name,
+        profilePicture: user.profile_picture,
       },
       token,
     });

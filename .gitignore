@@ -4,6 +4,8 @@
 .claude/*
 !.claude/settings.local.json
 
+/public/DrawKit/*
+
 # Supabase
 supabase
 supabase/*
@@ -150,3 +152,4 @@ workbox-*.js
 # Supabase (optional - uncomment if you want to ignore local Supabase setup)
 # /supabase/.branches
 # /supabase/.temp
+.next/cache/tsconfig.tsbuildinfo

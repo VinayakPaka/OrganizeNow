@@ -16,11 +16,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // Public routes that don't require authentication
-  const publicRoutes = ['/auth/login', '/auth/signup'];
+  const publicRoutes = ['/', '/auth/login', '/auth/signup'];
   const isPublicRoute = publicRoutes.includes(pathname);
 
   useEffect(() => {
-    // Try to get current user on mount
+    // Try to get current user on mount (but only for protected routes)
     if (!isAuthenticated && !isPublicRoute) {
       dispatch(getCurrentUser());
     }
