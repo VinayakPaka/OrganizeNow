@@ -6,9 +6,9 @@
 
 /public/DrawKit/*
 
-# Supabase
-supabase
-supabase/*
+# Supabase CLI directory (at root only)
+/supabase
+/supabase/*
 !.supabase/settings.local.json
 
 /FINAL_SUMMARY.md
