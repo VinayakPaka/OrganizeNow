@@ -21,6 +21,7 @@ import {
   Zap,
   Shield
 } from 'lucide-react';
+import { AnimatedLoader } from '@/components/common/AnimatedLoader';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -37,12 +38,9 @@ export default function LandingPage() {
     }
   }, [isAuthenticated, isLoading, router, mounted]);
 
+  // Show loading state while checking authentication
   if (isLoading || !mounted) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-purple-50">
-        <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+    return <AnimatedLoader message="Loading..." />;
   }
 
   if (isAuthenticated) {

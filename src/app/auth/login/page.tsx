@@ -15,10 +15,34 @@ function LoginForm() {
 
   const { isLoading, error, isAuthenticated } = useAppSelector((state) => state.auth);
 
+  // Valid routes that can be used as redirect targets
+  const validRedirectRoutes = [
+    '/dashboard',
+    '/tasks',
+    '/notes',
+    '/calendar',
+    '/vault',
+    '/whiteboards',
+    '/board',
+    '/settings',
+    '/search',
+    '/ai-assistant',
+  ];
+
+  // Get safe redirect URL
+  const getSafeRedirectUrl = () => {
+    const redirect = params.get("redirect");
+    if (!redirect) return "/dashboard";
+    
+    // Check if redirect starts with any valid route
+    const isValid = validRedirectRoutes.some(route => redirect.startsWith(route));
+    return isValid ? redirect : "/dashboard";
+  };
+
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      router.push(params.get("redirect") || "/dashboard");
+      router.push(getSafeRedirectUrl());
     }
   }, [isAuthenticated, router, params]);
 
@@ -39,7 +63,7 @@ function LoginForm() {
     const result = await dispatch(login({ email, password }));
 
     if (login.fulfilled.match(result)) {
-      router.push(params.get("redirect") || "/dashboard");
+      router.push(getSafeRedirectUrl());
     }
   }
 
