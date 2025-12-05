@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getCurrentUser } from '@/store/slices/authSlice';
+import { AnimatedLoader } from '@/components/common/AnimatedLoader';
 
 /**
  * AuthProvider component
@@ -35,14 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Show loading state while checking auth
   if (!isPublicRoute && isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    return <AnimatedLoader message="Authenticating..." />;
   }
 
   // If not authenticated and not on public route, don't render

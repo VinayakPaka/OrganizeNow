@@ -170,8 +170,34 @@ export function ExcalidrawCanvas({ boardId, theme = "light" }: ExcalidrawCanvasP
         className="flex items-center justify-center h-full"
         style={{ backgroundColor: theme === "dark" ? "#1e1e1e" : "white" }}
       >
-        <div style={{ color: theme === "dark" ? "#9ca3af" : "#6b7280", fontSize: "1.125rem" }}>
-          Loading canvas...
+        <div className="text-center">
+          {/* Animated dots */}
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div
+              className="w-3 h-3 rounded-full animate-bounce"
+              style={{ 
+                backgroundColor: theme === "dark" ? "#a78bfa" : "#7c3aed",
+                animationDelay: '0ms'
+              }}
+            ></div>
+            <div
+              className="w-3 h-3 rounded-full animate-bounce"
+              style={{ 
+                backgroundColor: theme === "dark" ? "#60a5fa" : "#2563eb",
+                animationDelay: '150ms'
+              }}
+            ></div>
+            <div
+              className="w-3 h-3 rounded-full animate-bounce"
+              style={{ 
+                backgroundColor: theme === "dark" ? "#818cf8" : "#4f46e5",
+                animationDelay: '300ms'
+              }}
+            ></div>
+          </div>
+          <div style={{ color: theme === "dark" ? "#9ca3af" : "#6b7280" }}>
+            Loading canvas...
+          </div>
         </div>
       </div>
     );

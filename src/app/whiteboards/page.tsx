@@ -189,7 +189,24 @@ export default function WhiteboardsPage() {
         {/* Loading State */}
         {isLoading && boards.length === 0 && (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="animate-spin text-purple-600 dark:text-purple-400" size={48} />
+            <div className="text-center">
+              {/* Animated dots */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <div
+                  className="w-4 h-4 rounded-full bg-purple-600 dark:bg-purple-400 animate-bounce"
+                  style={{ animationDelay: '0ms' }}
+                ></div>
+                <div
+                  className="w-4 h-4 rounded-full bg-pink-600 dark:bg-pink-400 animate-bounce"
+                  style={{ animationDelay: '150ms' }}
+                ></div>
+                <div
+                  className="w-4 h-4 rounded-full bg-indigo-600 dark:bg-indigo-400 animate-bounce"
+                  style={{ animationDelay: '300ms' }}
+                ></div>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400">Loading boards...</p>
+            </div>
           </div>
         )}
 

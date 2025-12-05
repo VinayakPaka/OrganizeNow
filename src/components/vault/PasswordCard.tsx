@@ -1,7 +1,7 @@
 'use client';
 
 import { Password } from '@/store/slices/passwordsSlice';
-import { Lock, Eye, EyeOff, Copy, Trash2, Edit, ExternalLink, CheckCircle } from 'lucide-react';
+import { Lock, Eye, EyeOff, Copy, Trash2, Edit, ExternalLink, CheckCircle, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface PasswordCardProps {
@@ -10,6 +10,7 @@ interface PasswordCardProps {
   onEdit: () => void;
   onDelete: () => void;
   decryptedPassword?: string;
+  isLoading?: boolean;
 }
 
 /**
@@ -22,6 +23,7 @@ export function PasswordCard({
   onEdit,
   onDelete,
   decryptedPassword,
+  isLoading = false,
 }: PasswordCardProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [copiedField, setCopiedField] = useState<'username' | 'password' | null>(null);
@@ -166,11 +168,14 @@ export function PasswordCard({
             <button
               type="button"
               onClick={handleTogglePassword}
-              className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition"
+              disabled={isLoading}
+              className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition disabled:opacity-50 disabled:cursor-not-allowed"
               title={showPassword ? 'Hide password' : 'Show password'}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? (
+              {isLoading ? (
+                <Loader2 size={14} className="text-purple-600 dark:text-purple-400 animate-spin" />
+              ) : showPassword ? (
                 <EyeOff size={14} className="text-gray-600 dark:text-gray-400" />
               ) : (
                 <Eye size={14} className="text-gray-600 dark:text-gray-400" />

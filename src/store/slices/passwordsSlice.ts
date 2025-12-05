@@ -220,15 +220,13 @@ const passwordsSlice = createSlice({
     // Fetch single password
     builder
       .addCase(fetchPasswordById.pending, (state) => {
-        state.isLoading = true;
+        // Don't set global isLoading to avoid disabling all cards
         state.error = null;
       })
       .addCase(fetchPasswordById.fulfilled, (state, action) => {
-        state.isLoading = false;
         state.currentPassword = action.payload;
       })
       .addCase(fetchPasswordById.rejected, (state, action) => {
-        state.isLoading = false;
         state.error = action.payload as string;
       });
 

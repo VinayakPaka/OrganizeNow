@@ -242,7 +242,24 @@ export default function TasksPage() {
               {/* Loading/Error States */}
               {isLoading && tasks.length === 0 && (
                 <div className="flex items-center justify-center py-20">
-                  <Loader2 size={48} className="animate-spin text-blue-600 dark:text-blue-400" />
+                  <div className="text-center">
+                    {/* Animated dots */}
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <div
+                        className="w-4 h-4 rounded-full bg-blue-600 dark:bg-blue-400 animate-bounce"
+                        style={{ animationDelay: '0ms' }}
+                      ></div>
+                      <div
+                        className="w-4 h-4 rounded-full bg-indigo-600 dark:bg-indigo-400 animate-bounce"
+                        style={{ animationDelay: '150ms' }}
+                      ></div>
+                      <div
+                        className="w-4 h-4 rounded-full bg-purple-600 dark:bg-purple-400 animate-bounce"
+                        style={{ animationDelay: '300ms' }}
+                      ></div>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-400">Loading tasks...</p>
+                  </div>
                 </div>
               )}
 

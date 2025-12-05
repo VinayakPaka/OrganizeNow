@@ -475,8 +475,25 @@ export function Canvas({ boardId, onItemsChange }: CanvasProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-gray-500">Loading board...</div>
+      <div className="flex items-center justify-center h-full bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          {/* Animated dots */}
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div
+              className="w-3 h-3 rounded-full bg-purple-600 dark:bg-purple-400 animate-bounce"
+              style={{ animationDelay: '0ms' }}
+            ></div>
+            <div
+              className="w-3 h-3 rounded-full bg-blue-600 dark:bg-blue-400 animate-bounce"
+              style={{ animationDelay: '150ms' }}
+            ></div>
+            <div
+              className="w-3 h-3 rounded-full bg-indigo-600 dark:bg-indigo-400 animate-bounce"
+              style={{ animationDelay: '300ms' }}
+            ></div>
+          </div>
+          <div className="text-gray-600 dark:text-gray-400">Loading board...</div>
+        </div>
       </div>
     );
   }

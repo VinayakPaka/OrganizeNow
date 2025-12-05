@@ -33,6 +33,7 @@ export default function VaultPage() {
   const [confirmDelete, setConfirmDelete] = useState<{ show: boolean; passwordId: string | null }>({ show: false, passwordId: null });
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [loadingPasswordId, setLoadingPasswordId] = useState<string | null>(null);
 
   // Fetch passwords on mount
   useEffect(() => {
@@ -62,7 +63,9 @@ export default function VaultPage() {
   const handleViewPassword = async (id: string) => {
     if (decryptedPasswords[id]) return;
 
+    setLoadingPasswordId(id);
     const result = await dispatch(fetchPasswordById(id));
+    setLoadingPasswordId(null);
 
     if (fetchPasswordById.fulfilled.match(result)) {
       const pwd = result.payload;
@@ -197,7 +200,24 @@ export default function VaultPage() {
         {/* Loading State */}
         {isLoading && passwords.length === 0 && (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="animate-spin text-purple-600 dark:text-purple-400" size={48} />
+            <div className="text-center">
+              {/* Animated dots */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <div
+                  className="w-4 h-4 rounded-full bg-purple-600 dark:bg-purple-400 animate-bounce"
+                  style={{ animationDelay: '0ms' }}
+                ></div>
+                <div
+                  className="w-4 h-4 rounded-full bg-blue-600 dark:bg-blue-400 animate-bounce"
+                  style={{ animationDelay: '150ms' }}
+                ></div>
+                <div
+                  className="w-4 h-4 rounded-full bg-indigo-600 dark:bg-indigo-400 animate-bounce"
+                  style={{ animationDelay: '300ms' }}
+                ></div>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400">Loading passwords...</p>
+            </div>
           </div>
         )}
 
@@ -242,6 +262,7 @@ export default function VaultPage() {
                 onView={() => handleViewPassword(password.id)}
                 onEdit={() => handleEditPassword(password)}
                 onDelete={() => handleDeletePassword(password.id)}
+                isLoading={loadingPasswordId === password.id}
               />
             ))}
           </div>
